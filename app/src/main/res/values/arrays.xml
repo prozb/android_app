@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="module_names">
+        <item>Grundlagen der Informatik</item>
+        <item>Naturwissenschaftliche und Technische Grundlagen</item>
+        <item>Rechnernetze und ihre Anwendung</item>
+        <item>Algorithmen und Datenstrukturen</item>
+        <item>Objekt Orientierte Programmierung</item>
+    </string-array>
+</resources>

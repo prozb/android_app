@@ -3,4 +3,7 @@
     <string name="add">Leistung anlegen</string>
     <string name="stats">Statistik</string>
     <string name="no_records">Leine Leistungen</string>
+    <string name="module_num">Modulnummer</string>
+    <string name="module_name">Modulname</string>
+    <string name="save">Speichern</string>
 </resources>
