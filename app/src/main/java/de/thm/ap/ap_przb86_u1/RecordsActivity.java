@@ -40,12 +40,12 @@ public class RecordsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Toast.makeText(this, "smth selected", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "smth selected", Toast.LENGTH_SHORT).show();
         Log.e("ADD", "onOptionsItemSelected");
 
         switch(item.getItemId()) {
             case R.id.action_add:
-                Toast.makeText(this, "add button pressed", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "add button pressed", Toast.LENGTH_SHORT).show();
                 Log.e("ADD", "add pressed");
                 Intent i = new Intent(this, RecordFormActivity.class);
                 startActivity(i);
@@ -53,7 +53,7 @@ public class RecordsActivity extends AppCompatActivity {
 
             case R.id.action_stats:
                 calculateStatistic();
-                Toast.makeText(this, "calc statistic button pressed", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "calc statistic button pressed", Toast.LENGTH_SHORT).show();
                 return true;
         }
 

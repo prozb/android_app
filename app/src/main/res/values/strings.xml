@@ -11,4 +11,7 @@
     <string name="credits">Credit Points</string>
     <string name="mark_percent">Note in %</string>
     <string name="sommer_semester">Sommersemester</string>
+    <string name="module_name_not_empty">Modulname darf nicht leer sein!</string>
+    <string name="illegal_cpr_number">Nummer der Cr ist nicht korrekt</string>
+    <string name="illegal_mark">Note ist nicht korrekt</string>
 </resources>

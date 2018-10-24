@@ -71,7 +71,7 @@
         android:id="@+id/credits_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textNoSuggestions"
+        android:inputType="numberSigned"
         android:maxLength="2"/>
 
     <TextView
@@ -83,7 +83,7 @@
         android:id="@+id/mark_percent_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textNoSuggestions"
+        android:inputType="numberSigned"
         android:maxLength="3"/>
 
     <CheckBox

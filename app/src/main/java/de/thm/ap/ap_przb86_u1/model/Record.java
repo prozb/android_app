@@ -3,7 +3,7 @@ package de.thm.ap.ap_przb86_u1.model;
 public class Record {
     private String modulNummer;
     private String modulName;
-    private boolean ss15;
+    private boolean isSoSe;
     private boolean fuenfzigProc;
     private int credits;
     private int note;
@@ -12,10 +12,10 @@ public class Record {
 
     }
 
-    public Record(String modulNummer, String modulName, boolean ss15, boolean fuenfzigProc, int credits, int note){
+    public Record(String modulNummer, String modulName, boolean isSoSe, boolean fuenfzigProc, int credits, int note){
         this.modulNummer  = modulNummer;
         this.modulName    = modulName;
-        this.ss15         = ss15;
+        this.isSoSe       = isSoSe;
         this.fuenfzigProc = fuenfzigProc;
         this.credits      = credits;
         this.note         = note;
@@ -30,7 +30,7 @@ public class Record {
     }
 
     public void setSs15(boolean ss15) {
-        this.ss15 = ss15;
+        this.isSoSe = isSoSe;
     }
 
     public void setCredits(int credits) {
@@ -50,7 +50,7 @@ public class Record {
     }
 
     public boolean isSs15() {
-        return ss15;
+        return isSoSe;
     }
 
     public int getCredits() {
