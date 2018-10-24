@@ -1,10 +1,8 @@
 package de.thm.ap.ap_przb86_u1;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -13,7 +11,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Optional;
 //import java.util.Optional;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
@@ -52,12 +49,23 @@ public class RecordFormActivity extends AppCompatActivity {
         year.setAdapter(adapter2);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public void onSave(View view){
         Record record = new Record();
 
         boolean isValid = true;
-        record.setModulName(moduleName.getText().toString().trim());
-        if("".equals(record.getModulName())){
+        record.setModuleName(moduleName.getText().toString().trim());
+        if("".equals(record.getModuleName())){
             moduleName.setError(getString(R.string.module_name_not_empty));
             isValid = false;
         }
@@ -66,19 +74,27 @@ public class RecordFormActivity extends AppCompatActivity {
         try{
             int credits = Integer.parseInt(creditPoints.getText().toString().trim());
 
-            record.setCredits(Integer.parseInt(creditPoints.getText().toString().trim()));
-            if(credits < 1 || credits > 50){
+            record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
+            if(credits < 3 || credits > 15){
                 creditPoints.setError(getString(R.string.illegal_cpr_number));
                 isValid = false;
             }
 
-            int note = Integer.parseInt(mark.getText().toString().trim());
+            int note;
 
-            record.setNote(note);
-            if(note < 1 || note > 50){
-                mark.setError(getString(R.string.illegal_mark));
-                isValid = false;
+            if(mark.getText().toString().trim().equals("")){
+                note = -1;
+            }else{
+                note = Integer.parseInt(mark.getText().toString().trim());
+
+
+                if(note < 50 || note > 100){
+                    mark.setError(getString(R.string.illegal_mark));
+                    isValid = false;
+                }
             }
+            record.setMark(note);
+
         }catch (NumberFormatException e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT);
             isValid = false;
@@ -86,7 +102,7 @@ public class RecordFormActivity extends AppCompatActivity {
 
 
         if(isValid){
-            record.setModulName(moduleNum.getText().toString().trim());
+            record.setModuleName(moduleNum.getText().toString().trim());
 
 
             finish();

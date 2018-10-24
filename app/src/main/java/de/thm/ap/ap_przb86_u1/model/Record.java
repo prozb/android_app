@@ -1,71 +1,89 @@
 package de.thm.ap.ap_przb86_u1.model;
 
-public class Record {
+import java.io.Serializable;
+
+public class Record implements Serializable {
+    private static int id;
     private String modulNummer;
     private String modulName;
-    private boolean isSoSe;
-    private boolean fuenfzigProc;
+    private boolean summerTerm;
+    private boolean halfWeighted;
     private int credits;
     private int note;
+    private int year;
 
     public Record(){
 
     }
 
-    public Record(String modulNummer, String modulName, boolean isSoSe, boolean fuenfzigProc, int credits, int note){
+    public Record(String modulNummer, String modulName, int year, boolean summerTerm, boolean halfWeighted, int credits, int note){
+        id++;
+
         this.modulNummer  = modulNummer;
         this.modulName    = modulName;
-        this.isSoSe       = isSoSe;
-        this.fuenfzigProc = fuenfzigProc;
+        this.summerTerm       = summerTerm;
+        this.halfWeighted = halfWeighted;
         this.credits      = credits;
         this.note         = note;
     }
 
-    public void setModulNummer(String modulNummer) {
+    public void setModuleNum(String modulNummer) {
         this.modulNummer = modulNummer;
     }
 
-    public void setModulName(String modulName) {
+    public void setModuleName(String modulName) {
         this.modulName = modulName;
     }
 
-    public void setSs15(boolean ss15) {
-        this.isSoSe = isSoSe;
+    public void setSummerTerm(boolean summerTerm) {
+        this.summerTerm = summerTerm;
     }
 
-    public void setCredits(int credits) {
+    public void setCrp(int credits) {
         this.credits = credits;
     }
 
-    public void setNote(int note) {
+    public void setMark(int note) {
         this.note = note;
     }
 
-    public String getModulNummer() {
-        return modulNummer;
+    public Integer getId() {
+        return id;
     }
 
-    public String getModulName() {
+    public String getModuleName() {
         return modulName;
     }
 
-    public boolean isSs15() {
-        return isSoSe;
+    public boolean isSummerTerm() {
+        return summerTerm;
     }
 
-    public int getCredits() {
+    public int getCrp() {
         return credits;
     }
 
-    public int getNote() {
+    public int getMark() {
         return note;
     }
 
-    public boolean isFuenfzigProc() {
-        return fuenfzigProc;
+    public boolean isHalfWeighted() {
+        return halfWeighted;
     }
 
-    public void setFuenfzigProc(boolean fuenfzigProc) {
-        this.fuenfzigProc = fuenfzigProc;
+    public void setHalfWeighted(boolean halfWeighted) {
+        this.halfWeighted = halfWeighted;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public String getModuleNum() {
+        return modulNummer;
     }
 }
