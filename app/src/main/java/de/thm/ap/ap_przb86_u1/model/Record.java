@@ -8,6 +8,10 @@ public class Record {
     private int credits;
     private int note;
 
+    public Record(){
+
+    }
+
     public Record(String modulNummer, String modulName, boolean ss15, boolean fuenfzigProc, int credits, int note){
         this.modulNummer  = modulNummer;
         this.modulName    = modulName;

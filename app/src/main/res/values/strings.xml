@@ -10,4 +10,5 @@
     <string name="semester">Semester</string>
     <string name="credits">Credit Points</string>
     <string name="mark_percent">Note in %</string>
+    <string name="sommer_semester">Sommersemester</string>
 </resources>
