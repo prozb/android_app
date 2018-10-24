@@ -6,4 +6,8 @@
     <string name="module_num">Modulnummer</string>
     <string name="module_name">Modulname</string>
     <string name="save">Speichern</string>
+    <string name="gewichtung_checkbox">50% Gewichtung</string>
+    <string name="semester">Semester</string>
+    <string name="credits">Credit Points</string>
+    <string name="mark_percent">Note in %</string>
 </resources>
