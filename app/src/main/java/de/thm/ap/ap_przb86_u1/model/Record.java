@@ -3,7 +3,7 @@ package de.thm.ap.ap_przb86_u1.model;
 import java.io.Serializable;
 
 public class Record implements Serializable {
-    private static int id;
+    private int id;
     private String modulNummer;
     private String modulName;
     private boolean summerTerm;
@@ -17,8 +17,6 @@ public class Record implements Serializable {
     }
 
     public Record(String modulNummer, String modulName, int year, boolean summerTerm, boolean halfWeighted, int credits, int note){
-        id++;
-
         this.modulNummer  = modulNummer;
         this.modulName    = modulName;
         this.summerTerm       = summerTerm;
@@ -27,8 +25,8 @@ public class Record implements Serializable {
         this.note         = note;
     }
 
-    public void setModuleNum(String modulNummer) {
-        this.modulNummer = modulNummer;
+    public void setId(int id){
+        this.id = id;
     }
 
     public void setModuleName(String modulName) {

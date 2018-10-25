@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.Optional;
 //import java.util.Optional;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
@@ -31,7 +32,7 @@ public class RecordFormActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_records_form);
 
-//        Optional.ofNullable(getSupportActionBar()).ifPresent(actionBar -> actionBar.setDisplayHomeAsUpEnabled(true));
+        Optional.ofNullable(getSupportActionBar()).ifPresent(actionBar -> actionBar.setDisplayHomeAsUpEnabled(true));
 
         moduleNum    = findViewById(R.id.module_num);
         moduleName   = findViewById(R.id.module_name);
@@ -103,7 +104,8 @@ public class RecordFormActivity extends AppCompatActivity {
 
         if(isValid){
             record.setModuleName(moduleNum.getText().toString().trim());
-
+            record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
+            new RecordDAO(this).persist(record);
 
             finish();
         }

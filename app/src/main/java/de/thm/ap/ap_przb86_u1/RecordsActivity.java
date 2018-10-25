@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
@@ -25,7 +26,6 @@ public class RecordsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_records);
-//        setContentView(R.layout.activity_records_form);
 
         recordListView = findViewById(R.id.records_list);
         emptyView = findViewById(R.id.records_list_empty);
@@ -67,11 +67,11 @@ public class RecordsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-//        List<Record> records = new RecordDAO(this).findAll();
-//
-//        ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,
-//                    android.R.layout.simple_list_item_1, records);
-//
-//        recordListView.setAdapter(adapter);
+        List<Record> records = new RecordDAO(this).findAll();
+
+        ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, records);
+
+        recordListView.setAdapter(adapter);
      }
 }
