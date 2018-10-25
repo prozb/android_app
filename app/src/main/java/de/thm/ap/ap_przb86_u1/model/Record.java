@@ -30,17 +30,18 @@ public class Record implements Serializable {
     public String toString() {
         String result = "";
 
-        if(moduleNum != null){
-            result += (moduleNum.toUpperCase() + ":");
-        }
         if(moduleName != null){
-            result += (" " + moduleName);
+            result += (moduleName + " ");
+        }
+        if(moduleNum != null){
+            result += (moduleNum.toUpperCase() + " ");
         }
         if(note == -1){
-            result += " null";
+            result += "(null ";
         }else{
-            result += (" " + note + "%");
+            result += ("(" + note + "% ");
         }
+        result += credits + "crp)";
 
         return result;
     }

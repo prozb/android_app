@@ -25,7 +25,7 @@ public class RecordsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Toast.makeText(this, "file deleted", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "file deleted", Toast.LENGTH_SHORT).show();
         new RecordDAO(this).close();
         setContentView(R.layout.activity_records);
 
@@ -61,8 +61,8 @@ public class RecordsActivity extends AppCompatActivity {
         Stats stats = new Stats(new RecordDAO(this).findAll());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.stats);
-        builder.setMessage("Statische Kennzahlen:\n\n" + "Durchschnittsnote: " + stats.getAverageMark()
-                + "\nSummer der Cp: " + stats.getSumCrp() + "\nCp zu Ende: " + stats.getCrpToEnd());
+        builder.setMessage("Durchschnittsnote: " + stats.getAverageMark()
+                + "%\nSummer der Cp: " + stats.getSumCrp() + "\nCp zu Ende: " + stats.getCrpToEnd());
         builder.setNeutralButton(R.string.close, null);
         builder.show();
     }
