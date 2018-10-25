@@ -18,18 +18,18 @@ import de.thm.ap.ap_przb86_u1.model.Record;
 
 public class RecordsActivity extends AppCompatActivity {
     private ListView recordListView;
-    private TextView emptyView;
-
+    private List<Record> records;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Toast.makeText(this, "file deleted", Toast.LENGTH_SHORT).show();
+        new RecordDAO(this).close();
         setContentView(R.layout.activity_records);
 
         recordListView = findViewById(R.id.records_list);
-        emptyView = findViewById(R.id.records_list_empty);
-        recordListView.setEmptyView(emptyView);
+        recordListView.setEmptyView(findViewById(R.id.records_list_empty));
     }
 
     @Override
@@ -67,10 +67,11 @@ public class RecordsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        List<Record> records = new RecordDAO(this).findAll();
+        records = new RecordDAO(this).findAll();
 
         ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_1, records);
+
 
         recordListView.setAdapter(adapter);
      }

@@ -30,6 +30,14 @@ class RecordDAO {
         initRecords();
     }
 
+    public void close(){
+        File f = ctx.getFileStreamPath(FILE_NAME);
+
+        if(f.exists()){
+            f.delete();
+        }
+    }
+
     public List<Record> findAll(){
         return records;
     }
@@ -79,7 +87,7 @@ class RecordDAO {
 
         if(f.exists()){
             try(FileInputStream in = ctx.openFileInput(FILE_NAME)){
-                Object obj = obj =  new ObjectInputStream(in).readObject();
+                Object obj = new ObjectInputStream(in).readObject();
                 records = (List<Record>) obj;
                 records.stream().mapToInt(Record::getId).max().ifPresent(id -> nextId = id + 1);
             }catch (Exception e){

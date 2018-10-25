@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class Record implements Serializable {
     private int id;
-    private String modulNummer;
-    private String modulName;
+    private String moduleNum;
+    private String moduleName;
     private boolean summerTerm;
     private boolean halfWeighted;
     private int credits;
@@ -16,21 +16,45 @@ public class Record implements Serializable {
 
     }
 
-    public Record(String modulNummer, String modulName, int year, boolean summerTerm, boolean halfWeighted, int credits, int note){
-        this.modulNummer  = modulNummer;
-        this.modulName    = modulName;
-        this.summerTerm       = summerTerm;
+    public Record(String moduleNumber, String moduleName, int year, boolean summerTerm, boolean halfWeighted, int credits, int note){
+        this.moduleNum    = moduleNumber;
+        this.moduleName   = moduleName;
+        this.summerTerm   = summerTerm;
         this.halfWeighted = halfWeighted;
         this.credits      = credits;
         this.note         = note;
+    }
+
+
+    @Override
+    public String toString() {
+        String result = "";
+
+        if(moduleNum != null){
+            result += (moduleNum.toUpperCase() + " ");
+        }
+        if(moduleName != null){
+            result += (" " + moduleName);
+        }
+        if(note == -1){
+            result += "n/b";
+        }else{
+            result += (" " + note + "%");
+        }
+
+        return result;
     }
 
     public void setId(int id){
         this.id = id;
     }
 
-    public void setModuleName(String modulName) {
-        this.modulName = modulName;
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public void setModuleNum(String moduleNum) {
+        this.moduleNum = moduleNum;
     }
 
     public void setSummerTerm(boolean summerTerm) {
@@ -50,7 +74,7 @@ public class Record implements Serializable {
     }
 
     public String getModuleName() {
-        return modulName;
+        return moduleName;
     }
 
     public boolean isSummerTerm() {
@@ -82,6 +106,6 @@ public class Record implements Serializable {
     }
 
     public String getModuleNum() {
-        return modulNummer;
+        return moduleNum;
     }
 }

@@ -23,8 +23,6 @@ public class RecordFormActivity extends AppCompatActivity {
     private AutoCompleteTextView moduleName;
     private Spinner year;
 
-//    @RequiresApi(api = Build.VERSION_CODES.N)
-//    @TargetApi(Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,14 +95,18 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setMark(note);
 
         }catch (NumberFormatException e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT);
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             isValid = false;
         }
 
 
         if(isValid){
-            record.setModuleName(moduleNum.getText().toString().trim());
-            record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
+            record.setModuleName(moduleName.getText().toString().trim());
+            record.setModuleNum(moduleNum.getText().toString().trim());
+            record.setMark(Integer.parseInt(mark.getText().toString().trim()));
+            record.setCrp(Integer.parseInt(mark.getText().toString().trim()));
+
+            Toast.makeText(this, record.toString(), Toast.LENGTH_SHORT).show();
             new RecordDAO(this).persist(record);
 
             finish();
