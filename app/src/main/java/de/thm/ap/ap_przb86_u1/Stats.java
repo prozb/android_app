@@ -9,10 +9,13 @@ public class Stats {
     private int sumCrp;
     private int sumHalfWeighted;
     private int averageMark;
+    private int sumModules;
 
     public Stats(List<Record> records) {
         calculateSumCrp(records);
         calculateAverageMark(records);
+
+        this.sumModules = records.size();
     }
 
     private void calculateAverageMark(List<Record> records) {
@@ -69,5 +72,9 @@ public class Stats {
 
     public int getAverageMark() {
         return averageMark;
+    }
+
+    public int getSumModules(){
+        return this.sumModules;
     }
 }

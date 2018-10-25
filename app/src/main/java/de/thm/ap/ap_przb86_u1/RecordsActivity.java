@@ -61,8 +61,11 @@ public class RecordsActivity extends AppCompatActivity {
         Stats stats = new Stats(new RecordDAO(this).findAll());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.stats);
-        builder.setMessage("Durchschnittsnote: " + stats.getAverageMark()
-                + "%\nSummer der Cp: " + stats.getSumCrp() + "\nCp zu Ende: " + stats.getCrpToEnd());
+        builder.setMessage("Leistungen: " + stats.getSumModules()
+                + "\n50% Leistungen: " + stats.getSumHalfWeighted()
+                + "\nSumme Crp: " + stats.getSumCrp()
+                + "\nDurchschnitt: " + stats.getAverageMark()
+                + "%\nCrp bis Ziel: " + stats.getCrpToEnd());
         builder.setNeutralButton(R.string.close, null);
         builder.show();
     }
