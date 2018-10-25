@@ -58,6 +58,8 @@ public class RecordsActivity extends AppCompatActivity {
     }
 
     private void calculateStatistic() {
+        Stats stats = new Stats(new RecordDAO(this).findAll());
+
     }
 
     @Override

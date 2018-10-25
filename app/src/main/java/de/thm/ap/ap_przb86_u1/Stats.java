@@ -16,18 +16,27 @@ public class Stats {
     }
 
     private void calculateAverageMark(List<Record> records) {
-        float sumCrpHalf = 0f;
-        int sumMark = 0;
-
+        float marksSum   = 0f;
+        float percentage = 0f;
         for(Record record : records){
-            if(record.isHalfWeighted()){
-                sumCrpHalf += 0.5 * record.getCrp();
-            }else{
-                sumCrpHalf += record.getCrp();
+            float between;
+            if(record.getMark() != -1) {
+                if (record.isHalfWeighted()) {
+                    percentage += 0.5;
+                    between = (float) 0.5 * record.getMark();
+                } else {
+                    percentage += 1;
+                    between = record.getMark();
+                }
+                marksSum += between;
             }
         }
 
-//        averageMark = (int)()
+        if(percentage == 0){
+            averageMark = 0;
+        }else {
+            averageMark = (int) (marksSum / percentage);
+        }
     }
 
     private void calculateSumCrp(List<Record> records){

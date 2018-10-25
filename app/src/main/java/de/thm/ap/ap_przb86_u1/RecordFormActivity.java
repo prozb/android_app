@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Optional;
 
@@ -102,8 +103,15 @@ public class RecordFormActivity extends AppCompatActivity {
             }
             record.setMark(note);
         }catch (NumberFormatException e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             isValid = false;
+        }
+
+        int yearValue;
+        if(!year.isSelected()){
+            yearValue = year.getBaseline();
+        }else{
+            yearValue = Integer.parseInt(year.getSelectedItem().toString().trim());
         }
 
 
@@ -111,9 +119,10 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setModuleName(moduleName.getText().toString().trim());
             record.setModuleNum(moduleNum.getText().toString().trim());
             record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
-            record.setYear(Integer.parseInt(year.getSelectedItem().toString().trim()));
+            record.setYear(yearValue); // TODO: fix years
             record.setHalfWeighted(halfWeightedCheckbox.isSelected());
             record.setSummerTerm(soseCheckbox.isSelected());
+//            Toast.makeText(this, "year: " + record.getYear(), Toast.LENGTH_SHORT).show();
 
             new RecordDAO(this).persist(record);
             finish();
@@ -121,12 +130,13 @@ public class RecordFormActivity extends AppCompatActivity {
     }
 
 
-    private Integer [] getYears(){
-        Integer [] years = new Integer [6];
+    private ArrayList<Integer> getYears(){
+        ArrayList<Integer> years = new ArrayList<>();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int yearsCount  = 5;
 
-        for(int i = years.length - 1; i >= 0; i--){
-            years[i] = currentYear--;
+        for(int i = 0; i < yearsCount; i++){
+            years.add(currentYear--);
         }
         return years;
     }
