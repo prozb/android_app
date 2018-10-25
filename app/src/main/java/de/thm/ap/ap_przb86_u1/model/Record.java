@@ -31,13 +31,13 @@ public class Record implements Serializable {
         String result = "";
 
         if(moduleNum != null){
-            result += (moduleNum.toUpperCase() + " ");
+            result += (moduleNum.toUpperCase() + ":");
         }
         if(moduleName != null){
             result += (" " + moduleName);
         }
         if(note == -1){
-            result += "n/b";
+            result += " null";
         }else{
             result += (" " + note + "%");
         }

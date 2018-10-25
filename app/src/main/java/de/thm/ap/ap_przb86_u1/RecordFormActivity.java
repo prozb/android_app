@@ -6,13 +6,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Optional;
-//import java.util.Optional;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
 
@@ -22,6 +22,8 @@ public class RecordFormActivity extends AppCompatActivity {
     private EditText mark;
     private AutoCompleteTextView moduleName;
     private Spinner year;
+    private CheckBox soseCheckbox;
+    private CheckBox halfWeightedCheckbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,9 @@ public class RecordFormActivity extends AppCompatActivity {
         creditPoints = findViewById(R.id.credits_number);
         mark         = findViewById(R.id.mark_percent_number);
         year         = findViewById(R.id.semester_spinner);
+        soseCheckbox = findViewById(R.id.half_weighted_checkbox);
+
+        halfWeightedCheckbox = findViewById(R.id.sose_checkbox);
 
         String [] names = getResources().getStringArray(R.array.module_names);
 
@@ -44,7 +49,8 @@ public class RecordFormActivity extends AppCompatActivity {
                 android.R.layout.simple_dropdown_item_1line, names);
         moduleName.setAdapter(adapter);
 
-        ArrayAdapter<Integer> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, getYears());
+        ArrayAdapter<Integer> adapter2 = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, getYears());
         year.setAdapter(adapter2);
     }
 
@@ -68,7 +74,6 @@ public class RecordFormActivity extends AppCompatActivity {
             moduleName.setError(getString(R.string.module_name_not_empty));
             isValid = false;
         }
-//
 
         try{
             int credits = Integer.parseInt(creditPoints.getText().toString().trim());
@@ -79,21 +84,23 @@ public class RecordFormActivity extends AppCompatActivity {
                 isValid = false;
             }
 
-            int note;
+            int note = 0;
 
-            if(mark.getText().toString().trim().equals("")){
+            if(mark.getText().toString().trim().equals("null")){
                 note = -1;
             }else{
-                note = Integer.parseInt(mark.getText().toString().trim());
+                try {
+                    note = Integer.parseInt(mark.getText().toString().trim());
 
-
-                if(note < 50 || note > 100){
+                    if (note < 50 || note > 100) {
+                        throw new NumberFormatException();
+                    }
+                }catch (NumberFormatException e){
                     mark.setError(getString(R.string.illegal_mark));
                     isValid = false;
                 }
             }
             record.setMark(note);
-
         }catch (NumberFormatException e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             isValid = false;
@@ -103,12 +110,12 @@ public class RecordFormActivity extends AppCompatActivity {
         if(isValid){
             record.setModuleName(moduleName.getText().toString().trim());
             record.setModuleNum(moduleNum.getText().toString().trim());
-            record.setMark(Integer.parseInt(mark.getText().toString().trim()));
-            record.setCrp(Integer.parseInt(mark.getText().toString().trim()));
+            record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
+            record.setYear(Integer.parseInt(year.getSelectedItem().toString().trim()));
+            record.setHalfWeighted(halfWeightedCheckbox.isSelected());
+            record.setSummerTerm(soseCheckbox.isSelected());
 
-            Toast.makeText(this, record.toString(), Toast.LENGTH_SHORT).show();
             new RecordDAO(this).persist(record);
-
             finish();
         }
     }
@@ -121,7 +128,6 @@ public class RecordFormActivity extends AppCompatActivity {
         for(int i = years.length - 1; i >= 0; i--){
             years[i] = currentYear--;
         }
-
         return years;
     }
 }
