@@ -1,6 +1,7 @@
 package de.thm.ap.ap_przb86_u1;
 
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,7 +41,7 @@ public class RecordsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.e("ADD", "onOptionsItemSelected");
+        Log.d("ADD", "onOptionsItemSelected");
 
         switch(item.getItemId()) {
             case R.id.action_add:
@@ -50,16 +51,20 @@ public class RecordsActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_stats:
-                calculateStatistic();
+                showStatistik();
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-    private void calculateStatistic() {
+    private void showStatistik() {
         Stats stats = new Stats(new RecordDAO(this).findAll());
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.stats);
+        builder.setMessage("Statische Kennzahlen:\n\n" + "Durchschnittsnote: " + stats.getAverageMark()
+                + "\nSummer der Cp: " + stats.getSumCrp() + "\nCp zu Ende: " + stats.getCrpToEnd());
+        builder.setNeutralButton(R.string.close, null);
+        builder.show();
     }
 
     @Override
@@ -73,11 +78,4 @@ public class RecordsActivity extends AppCompatActivity {
 
         recordListView.setAdapter(adapter);
      }
-
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//
-//        new RecordDAO(this).close();
-//    }
 }

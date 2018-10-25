@@ -14,4 +14,5 @@
     <string name="module_name_not_empty">Modulname darf nicht leer sein!</string>
     <string name="illegal_cpr_number">Die Zahl der Cr muss groesser als 2 und kleiner als 16 sein</string>
     <string name="illegal_mark">Note kann von 50 bin 100 und null sein</string>
+    <string name="close">Schiessen</string>
 </resources>

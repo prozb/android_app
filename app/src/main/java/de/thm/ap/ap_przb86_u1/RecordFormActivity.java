@@ -103,7 +103,6 @@ public class RecordFormActivity extends AppCompatActivity {
             }
             record.setMark(note);
         }catch (NumberFormatException e){
-//            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             isValid = false;
         }
 
@@ -122,7 +121,6 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setYear(yearValue); // TODO: fix years
             record.setHalfWeighted(halfWeightedCheckbox.isSelected());
             record.setSummerTerm(soseCheckbox.isSelected());
-//            Toast.makeText(this, "year: " + record.getYear(), Toast.LENGTH_SHORT).show();
 
             new RecordDAO(this).persist(record);
             finish();
