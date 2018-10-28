@@ -2,6 +2,7 @@ package de.thm.ap.ap_przb86_u1;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -9,6 +10,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +27,8 @@ public class RecordFormActivity extends AppCompatActivity {
     private Spinner year;
     private CheckBox soseCheckbox;
     private CheckBox halfWeightedCheckbox;
+
+    private ArrayList<Integer> years;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,30 @@ public class RecordFormActivity extends AppCompatActivity {
         ArrayAdapter<Integer> adapter2 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, getYears());
         year.setAdapter(adapter2);
+
+        if(getIntent().getExtras() != null && getIntent().hasExtra("position")){
+            int position = getIntent().getExtras().getInt("position");
+            Log.d("EDIT", "parsed position in list: " + position);
+            showRecordValues(position);
+        }
+    }
+
+    public void showRecordValues(int position){
+        Optional<Record> recordOptional = new RecordDAO(this).findById(position + 1);
+
+        if(recordOptional.isPresent()){
+            Record record = recordOptional.get();
+
+            moduleNum.setText(record.getModuleNum());
+            moduleName.setText(record.getModuleName());
+            mark.setText(String.valueOf(record.getMark()));
+            soseCheckbox.setChecked(record.isSummerTerm());
+            halfWeightedCheckbox.setChecked(record.isHalfWeighted());
+            creditPoints.setText(String.valueOf(record.getCrp()));
+            year.setSelection(years.indexOf(record.getYear()));
+            Toast.makeText(this, record.getModuleNum(), Toast.LENGTH_SHORT).show();
+            //TODO: correct year
+        }
     }
 
     @Override
@@ -105,11 +134,12 @@ public class RecordFormActivity extends AppCompatActivity {
         }
 
         int yearValue;
-        if(!year.isSelected()){
-            yearValue = year.getBaseline();
-        }else{
-            yearValue = Integer.parseInt(year.getSelectedItem().toString().trim());
-        }
+//        if(!year.isSelected()){
+//            yearValue = year.getBaseline();
+//        }else{
+        Toast.makeText(this, year.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+        yearValue = Integer.parseInt(String.valueOf(year.getSelectedItem().toString()));
+//        z
 
 
         if(isValid){
@@ -125,9 +155,8 @@ public class RecordFormActivity extends AppCompatActivity {
         }
     }
 
-
     private ArrayList<Integer> getYears(){
-        ArrayList<Integer> years = new ArrayList<>();
+        years = new ArrayList<>();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int yearsCount  = 5;
 

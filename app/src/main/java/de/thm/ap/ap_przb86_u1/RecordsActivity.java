@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,19 +20,26 @@ import java.util.List;
 import de.thm.ap.ap_przb86_u1.model.Record;
 
 public class RecordsActivity extends AppCompatActivity {
+    private static boolean DEBUGGING = true;
+    private boolean INITIALIZED = false;
     private ListView recordListView;
-    private List<Record> records;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Toast.makeText(this, "file deleted", Toast.LENGTH_SHORT).show();
         new RecordDAO(this).close();
+
         setContentView(R.layout.activity_records);
 
         recordListView = findViewById(R.id.records_list);
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
+        recordListView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent i = new Intent(RecordsActivity.this, RecordFormActivity.class);
+            i.putExtra("position", position);
+
+            startActivity(i);
+        });
     }
 
     @Override
@@ -74,11 +83,29 @@ public class RecordsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        records = new RecordDAO(this).findAll();
+        if(DEBUGGING && !INITIALIZED){
+            RecordDAO recordDAO = new RecordDAO(this);
+            recordDAO.persist(new Record("CS1013", "Objektorientierte Programmierung", 2016, true, true, 6, 73));
+            recordDAO.persist(new Record("MN1007", "Diskrete Mathematik", 2016, false, true, 6, 81));
+            recordDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
+            recordDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
+
+            INITIALIZED = true;
+        }
+
+        List<Record> records = new RecordDAO(this).findAll();
 
         ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, records);
+                    android.R.layout.simple_list_item_activated_1, records);
 
         recordListView.setAdapter(adapter);
      }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        new RecordDAO(this).close();
+    }
 }

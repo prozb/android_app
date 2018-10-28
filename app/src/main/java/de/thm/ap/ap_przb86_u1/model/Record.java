@@ -23,6 +23,7 @@ public class Record implements Serializable {
         this.halfWeighted = halfWeighted;
         this.credits      = credits;
         this.note         = note;
+        this.year         = year;
     }
 
 
