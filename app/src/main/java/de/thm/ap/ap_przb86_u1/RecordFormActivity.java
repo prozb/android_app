@@ -75,7 +75,7 @@ public class RecordFormActivity extends AppCompatActivity {
 
             moduleNum.setText(record.getModuleNum());
             moduleName.setText(record.getModuleName());
-            mark.setText(String.valueOf(record.getMark()));
+            mark.setText(record.getMark() == -1 ? "null" : Integer.toString(record.getMark()));
             soseCheckbox.setChecked(record.isSummerTerm());
             halfWeightedCheckbox.setChecked(record.isHalfWeighted());
             creditPoints.setText(String.valueOf(record.getCrp()));
