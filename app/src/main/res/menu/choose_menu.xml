@@ -6,7 +6,7 @@
     tools:context=".RecordsActivity">
 
     <item
-        android:id="@+id/send_mail"
+        android:id="@+id/action_mail"
         android:icon="@drawable/ic_mail_outline_white_24dp"
         app:showAsAction="ifRoom"
         android:title="@string/mail"/>

@@ -1,13 +1,17 @@
 package de.thm.ap.ap_przb86_u1;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -39,6 +43,12 @@ public class RecordsActivity extends AppCompatActivity {
             startActivity(i);
         });
         recordListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+//        recordListView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                return false;
+//            }
+//        });
         recordListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
@@ -58,12 +68,26 @@ public class RecordsActivity extends AppCompatActivity {
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                return false;
+                switch (item.getItemId()){
+                    case R.id.action_delete:
+                        Log.d("PRESSED", "delete action in choose menu performed");
+                        // TODO: Perform delete action
+                        deleteSelectedItems();
+                        mode.finish();
+                        return true;
+                    case R.id.action_mail:
+                        Log.d("PRESSED", "mail action in choose menu performed");
+                        // TODO: perform mail action
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
             }
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-
+//                mode = null;
             }
         });
     }
@@ -80,19 +104,39 @@ public class RecordsActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.action_add:
-                Log.e("ADD", "add pressed");
+                Log.d("PRESSED", "add module action in menu performed");
                 Intent i = new Intent(this, RecordFormActivity.class);
                 startActivity(i);
                 return true;
 
             case R.id.action_stats:
-                showStatistik();
+                Log.d("PRESSED", "statistics action in menu performed");
+                showStatistic();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showStatistik() {
+    private void deleteSelectedItems(){
+//        int selected = recordListView.getCheckedItemCount();
+//        Toast.makeText(this, "removing " + selected + " items", Toast.LENGTH_SHORT).show();
+
+        new AlertDialog.Builder(this).
+                setTitle(R.string.confirmation).
+                setMessage(R.string.confirmation_message).
+                setIcon(R.drawable.id_dialog_alert_24dp).
+                setPositiveButton(R.string.yes, (dialog, which) -> {
+
+//                    recordListView.cl
+//                    Log.d?("ALENGTH", "" + x.length);
+
+
+                    Log.d("PRESSED", "confirmed removing modules");
+                }).
+                setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).
+                show();
+    }
+    private void showStatistic() {
         Stats stats = new Stats(new RecordDAO(this).findAll());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.stats);
@@ -119,9 +163,6 @@ public class RecordsActivity extends AppCompatActivity {
             INITIALIZED = true;
         }
 
-        if(INITIALIZED){
-
-        }
         List<Record> records = new RecordDAO(this).findAll();
 
         ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,

@@ -17,4 +17,8 @@
     <string name="close">Schiessen</string>
     <string name="remove">Loeschen</string>
     <string name="mail">Mail schicken</string>
+    <string name="confirmation">Bestaetigung</string>
+    <string name="confirmation_message">Wollen sie die Module loeschen?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
 </resources>
