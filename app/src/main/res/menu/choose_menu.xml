@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".RecordsActivity">
+
+    <item
+        android:id="@+id/send_mail"
+        android:icon="@drawable/ic_mail_outline_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/mail"/>
+
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_delete_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="@string/remove"/>
+
+</menu>
