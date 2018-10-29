@@ -10,7 +10,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,6 +28,8 @@ public class RecordFormActivity extends AppCompatActivity {
     private CheckBox halfWeightedCheckbox;
 
     private ArrayList<Integer> years;
+    private int positionInList;
+    private boolean updateFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,8 @@ public class RecordFormActivity extends AppCompatActivity {
 
     public void showRecordValues(int position){
         Optional<Record> recordOptional = new RecordDAO(this).findById(position + 1);
+        this.positionInList = position + 1;
+        this.updateFlag = true;
 
         if(recordOptional.isPresent()){
             Record record = recordOptional.get();
@@ -78,7 +81,6 @@ public class RecordFormActivity extends AppCompatActivity {
             creditPoints.setText(String.valueOf(record.getCrp()));
             year.setSelection(years.indexOf(record.getYear()));
             Toast.makeText(this, record.getModuleNum(), Toast.LENGTH_SHORT).show();
-            //TODO: correct year
         }
     }
 
@@ -133,24 +135,27 @@ public class RecordFormActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        int yearValue;
-//        if(!year.isSelected()){
-//            yearValue = year.getBaseline();
-//        }else{
         Toast.makeText(this, year.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
-        yearValue = Integer.parseInt(String.valueOf(year.getSelectedItem().toString()));
-//        z
+        int yearValue = Integer.parseInt(String.valueOf(year.getSelectedItem().toString()));
 
 
         if(isValid){
             record.setModuleName(moduleName.getText().toString().trim());
             record.setModuleNum(moduleNum.getText().toString().trim());
             record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
-            record.setYear(yearValue); // TODO: fix years
+            record.setYear(yearValue);
             record.setHalfWeighted(halfWeightedCheckbox.isSelected());
             record.setSummerTerm(soseCheckbox.isSelected());
 
-            new RecordDAO(this).persist(record);
+            if(updateFlag && new RecordDAO(this).findById(positionInList) != null){
+                this.updateFlag = false;
+
+                record.setId(positionInList);
+                new RecordDAO(this).update(record);
+
+            }else {
+                new RecordDAO(this).persist(record);
+            }
             finish();
         }
     }

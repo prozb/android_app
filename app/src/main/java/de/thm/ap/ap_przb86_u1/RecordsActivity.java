@@ -93,6 +93,9 @@ public class RecordsActivity extends AppCompatActivity {
             INITIALIZED = true;
         }
 
+        if(INITIALIZED){
+
+        }
         List<Record> records = new RecordDAO(this).findAll();
 
         ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,
