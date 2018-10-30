@@ -1,6 +1,8 @@
 package de.thm.ap.ap_przb86_u1;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -71,13 +73,21 @@ public class RecordsActivity extends AppCompatActivity {
                         return true;
                     case R.id.action_mail:
                         //TODO: export chosen achievements
+
                         Log.d("PRESSED", "mail action in choose menu performed");
                         Intent emailIntent = new Intent(Intent.ACTION_SEND);
                         emailIntent.setType("plain/text");
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "someone@protonmail.ch"});
                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Meine Leistungen");
                         emailIntent.putExtra(Intent.EXTRA_TEXT, "Hallo someone \n\nhier sind meine Leistungen:\n\n" + getStatistics());
-                        startActivity(emailIntent);
+
+                        PackageManager packageManager = getPackageManager();
+                        List<ResolveInfo> activities = packageManager.queryIntentActivities(emailIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                        boolean isIntentSafe = activities.size() > 0;
+                        if(isIntentSafe) {
+                            startActivity(emailIntent);
+                        }
+
                         mode.finish();
                         return true;
                     default:
