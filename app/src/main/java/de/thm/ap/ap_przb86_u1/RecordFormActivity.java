@@ -66,12 +66,13 @@ public class RecordFormActivity extends AppCompatActivity {
     }
 
     public void showRecordValues(int position){
-        Optional<Record> recordOptional = new RecordDAO(this).findById(position + 1);
-        this.positionInList = position + 1;
+//        Optional<Record> recordOptional = new RecordDAO(this).findById(position + 1);
+        Record record = new RecordDAO(this).getRecord(position);
+//        this.positionInList = position + 1;
         this.updateFlag = true;
 
-        if(recordOptional.isPresent()){
-            Record record = recordOptional.get();
+//        if(recordOptional.isPresent()){
+//            Record record = recordOptional.get();
 
             moduleNum.setText(record.getModuleNum());
             moduleName.setText(record.getModuleName());
@@ -81,7 +82,7 @@ public class RecordFormActivity extends AppCompatActivity {
             creditPoints.setText(String.valueOf(record.getCrp()));
             year.setSelection(years.indexOf(record.getYear()));
             Toast.makeText(this, record.getModuleNum(), Toast.LENGTH_SHORT).show();
-        }
+//        }
     }
 
     @Override
