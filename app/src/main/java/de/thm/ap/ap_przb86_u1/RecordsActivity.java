@@ -67,13 +67,10 @@ public class RecordsActivity extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.action_delete:
                         Log.d("PRESSED", "delete action in choose menu performed");
-                        // TODO: Perform delete action
                         deleteSelectedItems();
                         mode.finish();
                         return true;
                     case R.id.action_mail:
-                        //TODO: export chosen achievements
-
                         Log.d("PRESSED", "mail action in choose menu performed");
                         Intent emailIntent = new Intent(Intent.ACTION_SEND);
                         emailIntent.setType("plain/text");
@@ -87,7 +84,6 @@ public class RecordsActivity extends AppCompatActivity {
                         if(isIntentSafe) {
                             startActivity(emailIntent);
                         }
-
                         mode.finish();
                         return true;
                     default:
@@ -97,7 +93,7 @@ public class RecordsActivity extends AppCompatActivity {
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-//                mode = null;
+
             }
         });
     }
@@ -142,13 +138,11 @@ public class RecordsActivity extends AppCompatActivity {
                         new RecordDAO(this).remove(s);
                         Log.d("REMOVING", "pos " + s + "removed");
                     }
-
-                    List<Record> records = new RecordDAO(this).findAll();
-                    ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,
-                            android.R.layout.simple_list_item_activated_1, records);
-                    adapter.notifyDataSetChanged();
-
                     Log.d("PRESSED", "confirmed removing modules");
+                    RecordsActivity.this.adapter.clear();
+                    RecordsActivity.this.adapter.addAll(new RecordDAO(RecordsActivity.this).findAll());
+//                    RecordsActivity.this.adapter.notifyDataSetChanged();
+//                    mode.finish();
                 }).
                 setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
     }
