@@ -52,18 +52,24 @@ class RecordDAO {
     }
 
     public boolean update(Record record){
-        boolean saved = false;
 
-        for(int i = 0; i < records.size(); i++){
-            if(record.getId() == records.get(i).getId()){
-                records.set(i, record);
+//        for(int i = 0; i < records.size(); i++){
+//            if(record.getId() == records.get(i).getId()){
 
-                saved = records.get(i).equals(record);
-            }
+        int incomingId = record.getId();
+        int oldId       = records.get(incomingId).getId();
+
+        if(incomingId > 0) {
+            records.set(incomingId, record);
+            records.get(incomingId).setId(oldId);
+
+//            }
+//        }
+            saveRecords();
+
+            return records.get(incomingId).equals(record);
         }
-        saveRecords();
-
-        return saved;
+        return false;
     }
 
     public Optional<Record> findById(int id){

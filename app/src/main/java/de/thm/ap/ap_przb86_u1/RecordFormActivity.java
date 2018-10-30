@@ -81,7 +81,7 @@ public class RecordFormActivity extends AppCompatActivity {
             halfWeightedCheckbox.setChecked(record.isHalfWeighted());
             creditPoints.setText(String.valueOf(record.getCrp()));
             year.setSelection(years.indexOf(record.getYear()));
-            Toast.makeText(this, record.getModuleNum(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, record.getModuleNum(), Toast.LENGTH_SHORT).show();
 //        }
     }
 
@@ -151,7 +151,7 @@ public class RecordFormActivity extends AppCompatActivity {
             if(updateFlag && new RecordDAO(this).getRecord(positionInList) != null){
                 this.updateFlag = false;
 
-                record.setId(++positionInList);
+                record.setId(positionInList);
                 new RecordDAO(this).update(record);
 
             }else {
