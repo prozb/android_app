@@ -124,25 +124,19 @@ public class RecordsActivity extends AppCompatActivity {
     }
 
     private void deleteSelectedItems(){
-//        int selected = recordListView.getCheckedItemCount();
-//        Toast.makeText(this, "removing " + selected + " items", Toast.LENGTH_SHORT).show();
-
         new AlertDialog.Builder(this).
                 setTitle(R.string.confirmation).
                 setMessage(R.string.confirmation_message).
                 setIcon(R.drawable.id_dialog_alert_24dp).
                 setPositiveButton(R.string.yes, (dialog, which) -> {
                     ArrayList<Integer> selected = getSelectedItemsArray();
+                    for(int i = selected.size() - 1; i >= 0; i--){
+                        new RecordDAO(this).remove(selected.get(i));
+                        Log.d("REMOVING", "removed " + selected.get(i));
 
-                    for(Integer s : selected){
-                        new RecordDAO(this).remove(s);
-                        Log.d("REMOVING", "pos " + s + "removed");
                     }
-                    Log.d("PRESSED", "confirmed removing modules");
                     RecordsActivity.this.adapter.clear();
                     RecordsActivity.this.adapter.addAll(new RecordDAO(RecordsActivity.this).findAll());
-//                    RecordsActivity.this.adapter.notifyDataSetChanged();
-//                    mode.finish();
                 }).
                 setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
     }
