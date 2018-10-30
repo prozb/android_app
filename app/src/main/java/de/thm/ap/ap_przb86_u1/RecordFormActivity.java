@@ -145,8 +145,8 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setModuleNum(moduleNum.getText().toString().trim());
             record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
             record.setYear(yearValue);
-            record.setHalfWeighted(halfWeightedCheckbox.isSelected());
-            record.setSummerTerm(soseCheckbox.isSelected());
+            record.setHalfWeighted(halfWeightedCheckbox.isChecked());
+            record.setSummerTerm(soseCheckbox.isChecked());
 
             if(updateFlag && new RecordDAO(this).getRecord(positionInList) != null){
                 this.updateFlag = false;
