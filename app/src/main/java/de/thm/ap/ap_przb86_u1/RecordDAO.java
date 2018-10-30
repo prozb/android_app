@@ -81,6 +81,11 @@ class RecordDAO {
 //        return records.stream().filter(record -> id == record.getId()).findFirst();
     }
 
+    public void remove (int id){
+        records.remove(id);
+        saveRecords();
+    }
+
     @SuppressWarnings("unchecked")
     public void initRecords(){
         File f = ctx.getFileStreamPath(FILE_NAME);

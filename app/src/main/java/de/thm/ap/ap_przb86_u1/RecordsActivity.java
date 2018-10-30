@@ -17,16 +17,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
-
-import static java.net.Proxy.Type.HTTP;
 
 public class RecordsActivity extends AppCompatActivity {
     private static boolean DEBUGGING = true;
     private boolean INITIALIZED = false;
     private ListView recordListView;
+    private ArrayAdapter<Record> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,20 +136,21 @@ public class RecordsActivity extends AppCompatActivity {
                 setMessage(R.string.confirmation_message).
                 setIcon(R.drawable.id_dialog_alert_24dp).
                 setPositiveButton(R.string.yes, (dialog, which) -> {
+                    ArrayList<Integer> selected = getSelectedItemsArray();
+
+                    for(Integer s : selected){
+                        new RecordDAO(this).remove(s);
+                        Log.d("REMOVING", "pos " + s + "removed");
+                    }
 
                     List<Record> records = new RecordDAO(this).findAll();
-                    SparseBooleanArray checkedPositions = recordListView.getCheckedItemPositions();
-
-                    for(int i = 0; i < records.size(); i++){
-                        if(checkedPositions.valueAt(i)){
-                            System.out.println("chosen at pos: " + i);
-                        }
-                    }
+                    ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,
+                            android.R.layout.simple_list_item_activated_1, records);
+                    adapter.notifyDataSetChanged();
 
                     Log.d("PRESSED", "confirmed removing modules");
                 }).
-                setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).
-                show();
+                setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
     }
     private void showStatistic() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -157,6 +158,24 @@ public class RecordsActivity extends AppCompatActivity {
         builder.setMessage(getStatistics());
         builder.setNeutralButton(R.string.close, null);
         builder.show();
+    }
+
+    private ArrayList<Integer> getSelectedItemsArray(){
+        List<Record> records        = new RecordDAO(this).findAll();
+        ArrayList<Integer> selected = new ArrayList<>();
+
+        SparseBooleanArray checkedPositions = recordListView.getCheckedItemPositions();
+
+        for(int i = 0; i < records.size(); i++){
+            if(checkedPositions.valueAt(i)){
+                int selectedElem = checkedPositions.keyAt(i);
+
+                selected.add(selectedElem);
+                Log.d("CHECKED", "selected element is: " + selectedElem);
+            }
+        }
+
+        return selected;
     }
 
     private String getStatistics(){
@@ -184,9 +203,8 @@ public class RecordsActivity extends AppCompatActivity {
 
         List<Record> records = new RecordDAO(this).findAll();
 
-        ArrayAdapter<Record> adapter = new ArrayAdapter<>(this,
+        adapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_activated_1, records);
-
         recordListView.setAdapter(adapter);
      }
 
