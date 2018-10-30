@@ -1,17 +1,15 @@
 package de.thm.ap.ap_przb86_u1;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -20,6 +18,8 @@ import android.widget.Toast;
 import java.util.List;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
+
+import static java.net.Proxy.Type.HTTP;
 
 public class RecordsActivity extends AppCompatActivity {
     private static boolean DEBUGGING = true;
@@ -43,12 +43,6 @@ public class RecordsActivity extends AppCompatActivity {
             startActivity(i);
         });
         recordListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-//        recordListView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                return false;
-//            }
-//        });
         recordListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
@@ -76,8 +70,14 @@ public class RecordsActivity extends AppCompatActivity {
                         mode.finish();
                         return true;
                     case R.id.action_mail:
+                        //TODO: export chosen achievements
                         Log.d("PRESSED", "mail action in choose menu performed");
-                        // TODO: perform mail action
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setType("plain/text");
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "someone@protonmail.ch"});
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Meine Leistungen");
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, "Hallo someone \n\nhier sind meine Leistungen:\n\n" + getStatistics());
+                        startActivity(emailIntent);
                         mode.finish();
                         return true;
                     default:
@@ -127,9 +127,14 @@ public class RecordsActivity extends AppCompatActivity {
                 setIcon(R.drawable.id_dialog_alert_24dp).
                 setPositiveButton(R.string.yes, (dialog, which) -> {
 
-//                    recordListView.cl
-//                    Log.d?("ALENGTH", "" + x.length);
+                    List<Record> records = new RecordDAO(this).findAll();
+                    SparseBooleanArray checkedPositions = recordListView.getCheckedItemPositions();
 
+                    for(int i = 0; i < records.size(); i++){
+                        if(checkedPositions.valueAt(i)){
+                            System.out.println("chosen at pos: " + i);
+                        }
+                    }
 
                     Log.d("PRESSED", "confirmed removing modules");
                 }).
@@ -137,18 +142,22 @@ public class RecordsActivity extends AppCompatActivity {
                 show();
     }
     private void showStatistic() {
-        Stats stats = new Stats(new RecordDAO(this).findAll());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.stats);
-        builder.setMessage("Leistungen: " + stats.getSumModules()
-                + "\n50% Leistungen: " + stats.getSumHalfWeighted()
-                + "\nSumme Crp: " + stats.getSumCrp()
-                + "\nDurchschnitt: " + stats.getAverageMark()
-                + "%\nCrp bis Ziel: " + stats.getCrpToEnd());
+        builder.setMessage(getStatistics());
         builder.setNeutralButton(R.string.close, null);
         builder.show();
     }
 
+    private String getStatistics(){
+        Stats stats = new Stats(new RecordDAO(this).findAll());
+
+        return  "Leistungen: " + stats.getSumModules()
+                + "\n50% Leistungen: " + stats.getSumHalfWeighted()
+                + "\nSumme Crp: " + stats.getSumCrp()
+                + "\nDurchschnitt: " + stats.getAverageMark()
+                + "%\nCrp bis Ziel: " + stats.getCrpToEnd();
+    }
     @Override
     protected void onStart() {
         super.onStart();
