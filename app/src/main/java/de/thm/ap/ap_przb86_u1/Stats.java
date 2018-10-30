@@ -12,11 +12,13 @@ public class Stats {
     private int sumHalfWeighted;
     private int averageMark;
     private int sumModules;
+    private List<Record> records;
 
     public Stats(List<Record> records) {
         calculateSumCrp(records);
         calculateAverageMark(records);
-
+        calculateSumOfHalfWeighted(records);
+        this.records = records;
         this.sumModules = records.size();
     }
 
@@ -82,6 +84,15 @@ public class Stats {
         return MAX_CP - sumCrp;
     }
 
+    private void calculateSumOfHalfWeighted(List<Record> records){
+        int sum = 0;
+        for(Record record : records){
+            if(record.isHalfWeighted()){
+                sum++;
+            }
+        }
+        this.sumHalfWeighted = sum;
+    }
     public int getSumHalfWeighted() {
         return sumHalfWeighted;
     }

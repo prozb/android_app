@@ -57,9 +57,12 @@ class RecordDAO {
 //            if(record.getId() == records.get(i).getId()){
 
         int incomingId = record.getId();
-        int oldId       = records.get(incomingId).getId();
 
         if(incomingId > 0) {
+            incomingId--;
+
+            int oldId       = records.get(incomingId).getId();
+
             records.set(incomingId, record);
             records.get(incomingId).setId(oldId);
 

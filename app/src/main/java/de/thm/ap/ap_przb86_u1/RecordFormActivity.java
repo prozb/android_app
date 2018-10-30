@@ -44,9 +44,9 @@ public class RecordFormActivity extends AppCompatActivity {
         creditPoints = findViewById(R.id.credits_number);
         mark         = findViewById(R.id.mark_percent_number);
         year         = findViewById(R.id.semester_spinner);
-        soseCheckbox = findViewById(R.id.half_weighted_checkbox);
+        soseCheckbox = findViewById(R.id.sose_checkbox);
 
-        halfWeightedCheckbox = findViewById(R.id.sose_checkbox);
+        halfWeightedCheckbox = findViewById(R.id.half_weighted_checkbox);
 
         String [] names = getResources().getStringArray(R.array.module_names);
 
@@ -151,7 +151,7 @@ public class RecordFormActivity extends AppCompatActivity {
             if(updateFlag && new RecordDAO(this).getRecord(positionInList) != null){
                 this.updateFlag = false;
 
-                record.setId(positionInList);
+                record.setId(++positionInList);
                 new RecordDAO(this).update(record);
 
             }else {
