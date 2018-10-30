@@ -109,7 +109,8 @@ public class RecordsActivity extends AppCompatActivity {
         Record record;
 
         for(int i = 0; i < selected.size(); i++){
-            record = new RecordDAO(this).getRecord(i);
+            int pos = selected.get(i);
+            record = new RecordDAO(this).getRecord(pos);
 
             if(record != null){
                 sb.append(record.getModuleName());
@@ -163,7 +164,6 @@ public class RecordsActivity extends AppCompatActivity {
                     for(int i = selected.size() - 1; i >= 0; i--){
                         new RecordDAO(this).remove(selected.get(i));
                         Log.d("REMOVING", "removed " + selected.get(i));
-
                     }
                     RecordsActivity.this.adapter.clear();
                     RecordsActivity.this.adapter.addAll(new RecordDAO(RecordsActivity.this).findAll());
