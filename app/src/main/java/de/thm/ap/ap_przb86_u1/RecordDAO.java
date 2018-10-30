@@ -52,9 +52,6 @@ class RecordDAO {
     }
 
     public boolean update(Record record){
-//        records = records.stream().map(o -> {
-//            o.getId() != record.getId() ? o : record}).collect(Collectors.toList());
-
         boolean saved = false;
 
         for(int i = 0; i < records.size(); i++){
@@ -64,7 +61,6 @@ class RecordDAO {
                 saved = records.get(i).equals(record);
             }
         }
-
         saveRecords();
 
         return saved;
@@ -83,7 +79,11 @@ class RecordDAO {
     }
 
     public void remove (int id){
-        records.remove(id);
+        try {
+            records.remove(id);
+        }catch (IndexOutOfBoundsException e){
+            Log.w("ERROR", "index out of bounds by removing record from file");
+        }
         saveRecords();
     }
 

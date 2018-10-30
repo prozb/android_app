@@ -68,7 +68,7 @@ public class RecordFormActivity extends AppCompatActivity {
     public void showRecordValues(int position){
 //        Optional<Record> recordOptional = new RecordDAO(this).findById(position + 1);
         Record record = new RecordDAO(this).getRecord(position);
-//        this.positionInList = position + 1;
+        this.positionInList = position;
         this.updateFlag = true;
 
 //        if(recordOptional.isPresent()){
@@ -76,7 +76,7 @@ public class RecordFormActivity extends AppCompatActivity {
 
             moduleNum.setText(record.getModuleNum());
             moduleName.setText(record.getModuleName());
-            mark.setText(record.getMark() == -1 ? "null" : Integer.toString(record.getMark()));
+            mark.setText(record.getMark());
             soseCheckbox.setChecked(record.isSummerTerm());
             halfWeightedCheckbox.setChecked(record.isHalfWeighted());
             creditPoints.setText(String.valueOf(record.getCrp()));
@@ -148,10 +148,10 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setHalfWeighted(halfWeightedCheckbox.isSelected());
             record.setSummerTerm(soseCheckbox.isSelected());
 
-            if(updateFlag && new RecordDAO(this).findById(positionInList) != null){
+            if(updateFlag && new RecordDAO(this).getRecord(positionInList) != null){
                 this.updateFlag = false;
 
-                record.setId(positionInList);
+                record.setId(++positionInList);
                 new RecordDAO(this).update(record);
 
             }else {

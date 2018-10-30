@@ -87,8 +87,10 @@ public class Record implements Serializable {
         return credits;
     }
 
-    public int getMark() {
-        return note;
+    public String getMark() {
+        if(note == -1)
+            return "null";
+        return "" + note;
     }
 
     public boolean isHalfWeighted() {

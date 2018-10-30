@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +46,7 @@ public class RecordsActivity extends AppCompatActivity {
         recordListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         recordListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                Toast.makeText(RecordsActivity.this, "chosed", Toast.LENGTH_SHORT).show();
-            }
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) { }
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) { // Inflate the menu for the CAB

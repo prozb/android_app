@@ -1,5 +1,7 @@
 package de.thm.ap.ap_przb86_u1;
 
+import android.util.Log;
+
 import java.util.List;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
@@ -23,13 +25,20 @@ public class Stats {
         float percentage = 0f;
         for(Record record : records){
             float between;
-            if(record.getMark() != -1) {
+            if(!record.getMark().equals("null")) {
+                int mark = 0;
+                try {
+                    mark = Integer.parseInt(record.getMark());
+                }catch (NumberFormatException e){
+                    Log.e("ERROR", "mark conversion error");
+                }
+
                 if (record.isHalfWeighted()) {
                     percentage += 0.5;
-                    between = (float) 0.5 * record.getMark();
+                    between = (float) 0.5 * mark;
                 } else {
                     percentage += 1;
-                    between = record.getMark();
+                    between = mark;
                 }
                 marksSum += between;
             }
@@ -46,7 +55,14 @@ public class Stats {
         int sum     = 0;
         int sumHalf = 0;
         for(Record r : records){
-            if(r.getMark() == -1 || (r.getMark() >= 50 && r.getMark() <= 100)) {
+            int mark = 0;
+            try {
+                mark = Integer.parseInt(r.getMark());
+            }catch (NumberFormatException e){
+                Log.e("ERROR", "mark conversion error");
+            }
+
+            if(r.getMark().equals("null") || mark >= 50 && mark <= 100) {
                 sum += r.getCrp();
 
                 if(r.isHalfWeighted())
