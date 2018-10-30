@@ -3,7 +3,6 @@ package de.thm.ap.ap_przb86_u1;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,15 +26,16 @@ public class RecordsActivity extends AppCompatActivity {
     private boolean INITIALIZED = false;
     private ListView recordListView;
     private ArrayAdapter<Record> adapter;
+    private StringBuilder sb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         new RecordDAO(this).close();
-
         setContentView(R.layout.activity_records);
 
+        sb = new StringBuilder();
         recordListView = findViewById(R.id.records_list);
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
@@ -76,14 +76,18 @@ public class RecordsActivity extends AppCompatActivity {
                         emailIntent.setType("plain/text");
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "someone@protonmail.ch"});
                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Meine Leistungen");
-                        emailIntent.putExtra(Intent.EXTRA_TEXT, "Hallo someone \n\nhier sind meine Leistungen:\n\n" + getStatistics());
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, "Hallo someone \n\nhier sind meine" +
+                                        " Leistungen:\n\n" + getStatisticsForMail());
 
                         PackageManager packageManager = getPackageManager();
-                        List<ResolveInfo> activities = packageManager.queryIntentActivities(emailIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                        List<ResolveInfo> activities = packageManager.queryIntentActivities(
+                                                    emailIntent, PackageManager.MATCH_DEFAULT_ONLY);
+
                         boolean isIntentSafe = activities.size() > 0;
                         if(isIntentSafe) {
                             startActivity(emailIntent);
                         }
+
                         mode.finish();
                         return true;
                     default:
@@ -98,6 +102,32 @@ public class RecordsActivity extends AppCompatActivity {
         });
     }
 
+    private String getStatisticsForMail() {
+        ArrayList<Integer> selected = getSelectedItemsArray();
+        sb.setLength(0);
+
+        Record record;
+
+        for(int i = 0; i < selected.size(); i++){
+            record = new RecordDAO(this).getRecord(i);
+
+            if(record != null){
+                sb.append(record.getModuleName());
+                sb.append(" ");
+                sb.append(record.getModuleNum());
+                sb.append(" (");
+                sb.append(record.getMark());
+                sb.append("% ");
+                sb.append(record.getCrp());
+                sb.append(" crp");
+                sb.append(")");
+                sb.append("\n");
+            }
+        }
+
+        return sb.toString();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.records, menu);
@@ -106,7 +136,7 @@ public class RecordsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d("ADD", "onOptionsItemSelected");
+//        Log.d("ADD", "onOptionsItemSelected");
 
         switch(item.getItemId()) {
             case R.id.action_add:
@@ -140,6 +170,7 @@ public class RecordsActivity extends AppCompatActivity {
                 }).
                 setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
     }
+
     private void showStatistic() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.stats);
@@ -148,6 +179,7 @@ public class RecordsActivity extends AppCompatActivity {
         builder.show();
     }
 
+    // getting selected items from listview
     private ArrayList<Integer> getSelectedItemsArray(){
         List<Record> records        = new RecordDAO(this).findAll();
         ArrayList<Integer> selected = new ArrayList<>();

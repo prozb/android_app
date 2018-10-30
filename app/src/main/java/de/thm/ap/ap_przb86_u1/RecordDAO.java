@@ -3,6 +3,7 @@ package de.thm.ap.ap_przb86_u1;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,6 +85,15 @@ class RecordDAO {
     public void remove (int id){
         records.remove(id);
         saveRecords();
+    }
+
+    public Record getRecord(int id) {
+        try {
+            return records.get(id);
+        }catch (IndexOutOfBoundsException e){
+            Log.w("ERROR", "index out of bounds by getting record from file");
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
