@@ -139,9 +139,6 @@ public class RecordsActivity extends AppCompatActivity {
 
         adapter.clear();
         adapter.addAll(new RecordDAO(this).findAll());
-//        adapter = new ArrayAdapter<>(this,
-//                android.R.layout.simple_list_item_activated_1, new RecordDAO(this).findAll());
-//        recordListView.setAdapter(adapter);
      }
 
 
