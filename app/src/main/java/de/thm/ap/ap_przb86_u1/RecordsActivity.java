@@ -84,7 +84,6 @@ public class RecordsActivity extends AppCompatActivity {
                         if(isIntentSafe) {
                             startActivity(emailIntent);
                         }
-
                         mode.finish();
                         return true;
                     default:
@@ -93,10 +92,77 @@ public class RecordsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onDestroyActionMode(ActionMode mode) {
-
-            }
+            public void onDestroyActionMode(ActionMode mode) {}
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.records, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_add:
+                Log.d("PRESSED", "add module action in menu performed");
+                Intent i = new Intent(this, RecordFormActivity.class);
+                startActivity(i);
+                return true;
+
+            case R.id.action_stats:
+                Log.d("PRESSED", "statistics action in menu performed");
+                showStatisticAlert();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(DEBUGGING && !INITIALIZED){
+            RecordDAO recordDAO = new RecordDAO(this);
+            recordDAO.persist(new Record("CS1013", "Objektorientierte Programmierung", 2016, true, true, 6, 73));
+            recordDAO.persist(new Record("MN1007", "Diskrete Mathematik", 2016, false, true, 6, 81));
+            recordDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
+            recordDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
+
+            INITIALIZED = true;
+        }
+
+        List<Record> records = new RecordDAO(this).findAll();
+
+        adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_activated_1, records);
+        recordListView.setAdapter(adapter);
+     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        new RecordDAO(this).close();
+    }
+
+    private void deleteSelectedItems(){
+        new AlertDialog.Builder(this).
+                setTitle(R.string.confirmation).
+                setMessage(R.string.confirmation_message).
+                setIcon(R.drawable.id_dialog_alert_24dp).
+                setPositiveButton(R.string.yes, (dialog, which) -> {
+                    ArrayList<Integer> selected = getSelectedItemsArray();
+                    for(int i = selected.size() - 1; i >= 0; i--){
+                        new RecordDAO(this).remove(selected.get(i));
+                        Log.d("REMOVING", "removed " + selected.get(i));
+                    }
+                    RecordsActivity.this.adapter.clear();
+                    RecordsActivity.this.adapter.addAll(new RecordDAO(RecordsActivity.this).findAll());
+                }).
+                setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
     }
 
     private String getStatisticsForMail() {
@@ -126,54 +192,35 @@ public class RecordsActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.records, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-//        Log.d("ADD", "onOptionsItemSelected");
-
-        switch(item.getItemId()) {
-            case R.id.action_add:
-                Log.d("PRESSED", "add module action in menu performed");
-                Intent i = new Intent(this, RecordFormActivity.class);
-                startActivity(i);
-                return true;
-
-            case R.id.action_stats:
-                Log.d("PRESSED", "statistics action in menu performed");
-                showStatistic();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void deleteSelectedItems(){
-        new AlertDialog.Builder(this).
-                setTitle(R.string.confirmation).
-                setMessage(R.string.confirmation_message).
-                setIcon(R.drawable.id_dialog_alert_24dp).
-                setPositiveButton(R.string.yes, (dialog, which) -> {
-                    ArrayList<Integer> selected = getSelectedItemsArray();
-                    for(int i = selected.size() - 1; i >= 0; i--){
-                        new RecordDAO(this).remove(selected.get(i));
-                        Log.d("REMOVING", "removed " + selected.get(i));
-                    }
-                    RecordsActivity.this.adapter.clear();
-                    RecordsActivity.this.adapter.addAll(new RecordDAO(RecordsActivity.this).findAll());
-                }).
-                setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
-    }
-
-    private void showStatistic() {
+    private void showStatisticAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.stats);
         builder.setMessage(getStatistics());
         builder.setNeutralButton(R.string.close, null);
         builder.show();
+    }
+
+    private String getStatistics(){
+        Stats stats = new Stats(new RecordDAO(this).findAll());
+
+        sb.setLength(0);
+        sb.append("Leistungen: ");
+        sb.append(stats.getSumModules());
+        sb.append("\n50% Leistungen: ");
+        sb.append(stats.getSumHalfWeighted());
+        sb.append("\nSumme Crp: ");
+        sb.append(stats.getSumCrp());
+        sb.append("\nDurchschnitt: ");
+        sb.append(stats.getAverageMark());
+        sb.append("%n\nCrp bis Ziel: ");
+        sb.append(stats.getCrpToEnd());
+
+        return sb.toString();
+//        return  "Leistungen: " + stats.getSumModules()
+//                + "\n50% Leistungen: " + stats.getSumHalfWeighted()
+//                + "\nSumme Crp: " + stats.getSumCrp()
+//                + "\nDurchschnitt: " + stats.getAverageMark()
+//                + "%\nCrp bis Ziel: " + stats.getCrpToEnd();
     }
 
     // getting selected items from listview
@@ -193,43 +240,5 @@ public class RecordsActivity extends AppCompatActivity {
         }
 
         return selected;
-    }
-
-    private String getStatistics(){
-        Stats stats = new Stats(new RecordDAO(this).findAll());
-
-        return  "Leistungen: " + stats.getSumModules()
-                + "\n50% Leistungen: " + stats.getSumHalfWeighted()
-                + "\nSumme Crp: " + stats.getSumCrp()
-                + "\nDurchschnitt: " + stats.getAverageMark()
-                + "%\nCrp bis Ziel: " + stats.getCrpToEnd();
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        if(DEBUGGING && !INITIALIZED){
-            RecordDAO recordDAO = new RecordDAO(this);
-            recordDAO.persist(new Record("CS1013", "Objektorientierte Programmierung", 2016, true, true, 6, 73));
-            recordDAO.persist(new Record("MN1007", "Diskrete Mathematik", 2016, false, true, 6, 81));
-            recordDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
-            recordDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
-
-            INITIALIZED = true;
-        }
-
-        List<Record> records = new RecordDAO(this).findAll();
-
-        adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_activated_1, records);
-        recordListView.setAdapter(adapter);
-     }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        new RecordDAO(this).close();
     }
 }
