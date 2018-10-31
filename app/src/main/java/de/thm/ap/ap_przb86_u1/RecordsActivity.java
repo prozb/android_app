@@ -37,6 +37,10 @@ public class RecordsActivity extends AppCompatActivity {
         sb = new StringBuilder();
         recordListView = findViewById(R.id.records_list);
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
+        adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_activated_1, new RecordDAO(this).findAll());
+        recordListView.setAdapter(adapter);
+
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
             Intent i = new Intent(RecordsActivity.this, RecordFormActivity.class);
             i.putExtra("position", position);
@@ -133,11 +137,11 @@ public class RecordsActivity extends AppCompatActivity {
             INITIALIZED = true;
         }
 
-        List<Record> records = new RecordDAO(this).findAll();
-
-        adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_activated_1, records);
-        recordListView.setAdapter(adapter);
+        adapter.clear();
+        adapter.addAll(new RecordDAO(this).findAll());
+//        adapter = new ArrayAdapter<>(this,
+//                android.R.layout.simple_list_item_activated_1, new RecordDAO(this).findAll());
+//        recordListView.setAdapter(adapter);
      }
 
 
@@ -216,11 +220,6 @@ public class RecordsActivity extends AppCompatActivity {
         sb.append(stats.getCrpToEnd());
 
         return sb.toString();
-//        return  "Leistungen: " + stats.getSumModules()
-//                + "\n50% Leistungen: " + stats.getSumHalfWeighted()
-//                + "\nSumme Crp: " + stats.getSumCrp()
-//                + "\nDurchschnitt: " + stats.getAverageMark()
-//                + "%\nCrp bis Ziel: " + stats.getCrpToEnd();
     }
 
     // getting selected items from listview
