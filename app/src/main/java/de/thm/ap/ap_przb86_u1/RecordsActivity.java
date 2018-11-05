@@ -1,5 +1,6 @@
 package de.thm.ap.ap_przb86_u1;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -17,6 +18,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Executors;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
 
@@ -26,19 +29,20 @@ public class RecordsActivity extends AppCompatActivity {
     private ListView recordListView;
     private ArrayAdapter<Record> adapter;
     private StringBuilder sb;
+    private RecordDAO recordDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        new RecordDAO(this).close();
+        new RecordFileDAO(this).close();
         setContentView(R.layout.activity_records);
 
         sb = new StringBuilder();
         recordListView = findViewById(R.id.records_list);
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
         adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_activated_1, new RecordDAO(this).findAll());
+                android.R.layout.simple_list_item_activated_1, new RecordFileDAO(this).findAll());
         recordListView.setAdapter(adapter);
 
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
@@ -48,6 +52,35 @@ public class RecordsActivity extends AppCompatActivity {
             startActivity(i);
         });
         recordListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        if(DEBUGGING && !INITIALIZED){
+            Executors.newSingleThreadExecutor()
+                    .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                            "CS1013", "Objektorientierte Programmierung",
+                            2016, true, true, 6, 73)));
+            Executors.newSingleThreadExecutor()
+                    .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                            "MN1007", "Diskrete Mathematik",
+                            2016, false, true, 6, 81)));
+            Executors.newSingleThreadExecutor()
+                    .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                            "LEL", "LUL",
+                            2016, false, true, 6, 81)));
+//            recordDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
+//            recordDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
+
+            INITIALIZED = true;
+        }
+
+        AppDatabase.getDb(this).recordDAO().findAll().observe(this,
+                records -> {
+                    if(records != null) {
+                        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1, records);
+                        recordListView.setAdapter(adapter);
+                    }
+                });
+        //updateAdapter();
+
         recordListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) { }
@@ -69,6 +102,7 @@ public class RecordsActivity extends AppCompatActivity {
                     case R.id.action_delete:
                         Log.d("PRESSED", "delete action in choose menu performed");
                         deleteSelectedItems();
+//                        updateAdapter();
                         mode.finish();
                         return true;
                     case R.id.action_mail:
@@ -113,6 +147,7 @@ public class RecordsActivity extends AppCompatActivity {
                 Log.d("PRESSED", "add module action in menu performed");
                 Intent i = new Intent(this, RecordFormActivity.class);
                 startActivity(i);
+//                updateAdapter();
                 return true;
 
             case R.id.action_stats:
@@ -127,26 +162,49 @@ public class RecordsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if(DEBUGGING && !INITIALIZED){
-            RecordDAO recordDAO = new RecordDAO(this);
-            recordDAO.persist(new Record("CS1013", "Objektorientierte Programmierung", 2016, true, true, 6, 73));
-            recordDAO.persist(new Record("MN1007", "Diskrete Mathematik", 2016, false, true, 6, 81));
-            recordDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
-            recordDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
+//        if(DEBUGGING && !INITIALIZED){
+//            RecordFileDAO recordFileDAO = new RecordFileDAO(this);
+//            recordFileDAO.persist(new Record("CS1013", "Objektorientierte Programmierung", 2016, true, true, 6, 73));
+//            recordFileDAO.persist(new Record("MN1007", "Diskrete Mathematik", 2016, false, true, 6, 81));
+//            recordFileDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
+//            recordFileDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
+//
+//            INITIALIZED = true;
+//        }
+//
+//        adapter.clear();
+//        adapter.addAll(new RecordFileDAO(this).findAll());
 
-            INITIALIZED = true;
-        }
-
-        adapter.clear();
-        adapter.addAll(new RecordDAO(this).findAll());
+//
+//        if(DEBUGGING && !INITIALIZED){
+//            RecordFileDAO recordFileDAO = new RecordFileDAO(this);
+//            recordFileDAO.persist(new Record("CS1013", "Objektorientierte Programmierung", 2016, true, true, 6, 73));
+//            recordFileDAO.persist(new Record("MN1007", "Diskrete Mathematik", 2016, false, true, 6, 81));
+//            recordFileDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
+//            recordFileDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
+//
+//            INITIALIZED = true;
+//        }
+//
+//        updateAdapter();
      }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//
+//        new RecordFileDAO(this).close();
+//    }
 
-        new RecordDAO(this).close();
+    private void updateAdapter(){
+        RecordsActivity.this.adapter.clear();
+//        LiveData<List<Record>> recordsLive = AppDatabase.getDb(this).recordDAO().findAll();
+//        RecordsActivity.this.adapter.addAll(recordsLive.getValue());
+        Executors.newSingleThreadExecutor()
+                .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                        "CS50", "Programmierung",
+                        2016, true, true, 6, 73)));
     }
 
     private void deleteSelectedItems(){
@@ -157,11 +215,9 @@ public class RecordsActivity extends AppCompatActivity {
                 setPositiveButton(R.string.yes, (dialog, which) -> {
                     ArrayList<Integer> selected = getSelectedItemsArray();
                     for(int i = selected.size() - 1; i >= 0; i--){
-                        new RecordDAO(this).remove(selected.get(i));
+                        new RecordFileDAO(this).remove(selected.get(i));
                         Log.d("REMOVING", "removed " + selected.get(i));
                     }
-                    RecordsActivity.this.adapter.clear();
-                    RecordsActivity.this.adapter.addAll(new RecordDAO(RecordsActivity.this).findAll());
                 }).
                 setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
     }
@@ -174,7 +230,7 @@ public class RecordsActivity extends AppCompatActivity {
 
         for(int i = 0; i < selected.size(); i++){
             int pos = selected.get(i);
-            record = new RecordDAO(this).getRecord(pos);
+            record = new RecordFileDAO(this).getRecord(pos);
 
             if(record != null){
                 sb.append(record.getModuleName());
@@ -183,7 +239,7 @@ public class RecordsActivity extends AppCompatActivity {
                 sb.append(" (");
                 sb.append(record.getMark());
                 sb.append("% ");
-                sb.append(record.getCrp());
+                sb.append(record.getCredits());
                 sb.append(" crp");
                 sb.append(")");
                 sb.append("\n");
@@ -202,7 +258,7 @@ public class RecordsActivity extends AppCompatActivity {
     }
 
     private String getStatistics(){
-        Stats stats = new Stats(new RecordDAO(this).findAll());
+        Stats stats = new Stats(new RecordFileDAO(this).findAll());
 
         sb.setLength(0);
         sb.append("Leistungen: ");
@@ -221,7 +277,7 @@ public class RecordsActivity extends AppCompatActivity {
 
     // getting selected items from listview
     private ArrayList<Integer> getSelectedItemsArray(){
-        List<Record> records        = new RecordDAO(this).findAll();
+        List<Record> records        = new RecordFileDAO(this).findAll();
         ArrayList<Integer> selected = new ArrayList<>();
 
         SparseBooleanArray checkedPositions = recordListView.getCheckedItemPositions();

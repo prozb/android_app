@@ -1,28 +1,34 @@
 package de.thm.ap.ap_przb86_u1.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.io.Serializable;
 
+@Entity
 public class Record implements Serializable {
+    @PrimaryKey
     private int id;
+
     private String moduleNum;
     private String moduleName;
     private boolean summerTerm;
-    private boolean halfWeighted;
+    private boolean isHalfWeighted;
     private int credits;
-    private int note;
+    private int mark;
     private int year;
 
     public Record(){
 
     }
 
-    public Record(String moduleNumber, String moduleName, int year, boolean summerTerm, boolean halfWeighted, int credits, int note){
+    public Record(String moduleNumber, String moduleName, int year, boolean summerTerm, boolean isHalfWeighted, int credits, int mark){
         this.moduleNum    = moduleNumber;
         this.moduleName   = moduleName;
         this.summerTerm   = summerTerm;
-        this.halfWeighted = halfWeighted;
+        this.isHalfWeighted = isHalfWeighted;
         this.credits      = credits;
-        this.note         = note;
+        this.mark         = mark;
         this.year         = year;
     }
 
@@ -37,11 +43,8 @@ public class Record implements Serializable {
         if(moduleNum != null){
             result += (moduleNum.toUpperCase() + " ");
         }
-        if(note == -1){
-            result += "(null ";
-        }else{
-            result += ("(" + note + "% ");
-        }
+
+        result += ("(" + mark + "% ");
         result += credits + "crp)";
 
         return result;
@@ -63,12 +66,12 @@ public class Record implements Serializable {
         this.summerTerm = summerTerm;
     }
 
-    public void setCrp(int credits) {
+    public void setCredits(int credits) {
         this.credits = credits;
     }
 
     public void setMark(int note) {
-        this.note = note;
+        this.mark = note;
     }
 
     public Integer getId() {
@@ -83,22 +86,20 @@ public class Record implements Serializable {
         return summerTerm;
     }
 
-    public int getCrp() {
+    public int getCredits() {
         return credits;
     }
 
-    public String getMark() {
-        if(note == -1)
-            return "null";
-        return "" + note;
+    public int getMark() {
+        return mark;
     }
 
     public boolean isHalfWeighted() {
-        return halfWeighted;
+        return isHalfWeighted;
     }
 
-    public void setHalfWeighted(boolean halfWeighted) {
-        this.halfWeighted = halfWeighted;
+    public void setIsHalfWeighted(boolean halfWeighted) {
+        this.isHalfWeighted = halfWeighted;
     }
 
     public int getYear() {

@@ -66,23 +66,17 @@ public class RecordFormActivity extends AppCompatActivity {
     }
 
     public void showRecordValues(int position){
-//        Optional<Record> recordOptional = new RecordDAO(this).findById(position + 1);
-        Record record = new RecordDAO(this).getRecord(position);
+        Record record = new RecordFileDAO(this).getRecord(position);
         this.positionInList = position;
         this.updateFlag = true;
-
-//        if(recordOptional.isPresent()){
-//            Record record = recordOptional.get();
 
             moduleNum.setText(record.getModuleNum());
             moduleName.setText(record.getModuleName());
             mark.setText(record.getMark());
             soseCheckbox.setChecked(record.isSummerTerm());
             halfWeightedCheckbox.setChecked(record.isHalfWeighted());
-            creditPoints.setText(String.valueOf(record.getCrp()));
+            creditPoints.setText(String.valueOf(record.getCredits()));
             year.setSelection(years.indexOf(record.getYear()));
-//            Toast.makeText(this, record.getModuleNum(), Toast.LENGTH_SHORT).show();
-//        }
     }
 
     @Override
@@ -109,28 +103,24 @@ public class RecordFormActivity extends AppCompatActivity {
         try{
             int credits = Integer.parseInt(creditPoints.getText().toString().trim());
 
-            record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
+            record.setCredits(Integer.parseInt(creditPoints.getText().toString().trim()));
             if(credits < 3 || credits > 15){
                 creditPoints.setError(getString(R.string.illegal_cpr_number));
                 isValid = false;
             }
 
             int note = 0;
+            try {
+                note = Integer.parseInt(mark.getText().toString().trim());
 
-            if(mark.getText().toString().trim().equals("null")){
-                note = -1;
-            }else{
-                try {
-                    note = Integer.parseInt(mark.getText().toString().trim());
-
-                    if (note < 50 || note > 100) {
-                        throw new NumberFormatException();
-                    }
-                }catch (NumberFormatException e){
-                    mark.setError(getString(R.string.illegal_mark));
-                    isValid = false;
+                if (!(note == 0 || note > 49 && note < 101)) {
+                    throw new NumberFormatException();
                 }
+            }catch (NumberFormatException e){
+                mark.setError(getString(R.string.illegal_mark));
+                isValid = false;
             }
+
             record.setMark(note);
         }catch (NumberFormatException e){
             isValid = false;
@@ -143,19 +133,19 @@ public class RecordFormActivity extends AppCompatActivity {
         if(isValid){
             record.setModuleName(moduleName.getText().toString().trim());
             record.setModuleNum(moduleNum.getText().toString().trim());
-            record.setCrp(Integer.parseInt(creditPoints.getText().toString().trim()));
+            record.setCredits(Integer.parseInt(creditPoints.getText().toString().trim()));
             record.setYear(yearValue);
-            record.setHalfWeighted(halfWeightedCheckbox.isChecked());
+            record.setIsHalfWeighted(halfWeightedCheckbox.isChecked());
             record.setSummerTerm(soseCheckbox.isChecked());
 
-            if(updateFlag && new RecordDAO(this).getRecord(positionInList) != null){
+            if(updateFlag && new RecordFileDAO(this).getRecord(positionInList) != null){
                 this.updateFlag = false;
 
                 record.setId(++positionInList);
-                new RecordDAO(this).update(record);
+                new RecordFileDAO(this).update(record);
 
             }else {
-                new RecordDAO(this).persist(record);
+                new RecordFileDAO(this).persist(record);
             }
             finish();
         }

@@ -27,13 +27,8 @@ public class Stats {
         float percentage = 0f;
         for(Record record : records){
             float between;
-            if(!record.getMark().equals("null")) {
-                int mark = 0;
-                try {
-                    mark = Integer.parseInt(record.getMark());
-                }catch (NumberFormatException e){
-                    Log.e("ERROR", "mark conversion error");
-                }
+            if(record.getMark() != 0) {
+                int mark = record.getMark();
 
                 if (record.isHalfWeighted()) {
                     percentage += 0.5;
@@ -57,15 +52,10 @@ public class Stats {
         int sum     = 0;
         int sumHalf = 0;
         for(Record r : records){
-            int mark = 0;
-            try {
-                mark = Integer.parseInt(r.getMark());
-            }catch (NumberFormatException e){
-                Log.e("ERROR", "mark conversion error");
-            }
+            int mark = r.getMark();
 
-            if(r.getMark().equals("null") || mark >= 50 && mark <= 100) {
-                sum += r.getCrp();
+            if(r.getMark() == 0 || mark >= 50 && mark <= 100) {
+                sum += r.getCredits();
 
                 if(r.isHalfWeighted())
                     sumHalf++;
