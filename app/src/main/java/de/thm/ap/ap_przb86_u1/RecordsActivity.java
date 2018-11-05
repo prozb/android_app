@@ -29,22 +29,22 @@ public class RecordsActivity extends AppCompatActivity {
     private ListView recordListView;
     private ArrayAdapter<Record> adapter;
     private StringBuilder sb;
-    private RecordDAO recordDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        new RecordFileDAO(this).close();
         setContentView(R.layout.activity_records);
 
         sb = new StringBuilder();
         recordListView = findViewById(R.id.records_list);
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
-        adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_activated_1, new RecordFileDAO(this).findAll());
-        recordListView.setAdapter(adapter);
-
+        AppDatabase.getDb(this).recordDAO().findAll().observe(this,
+                records -> {
+                    if(records != null) {
+                        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1, records);
+                        recordListView.setAdapter(adapter);
+                    }
+                });
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
             Intent i = new Intent(RecordsActivity.this, RecordFormActivity.class);
             i.putExtra("position", position);
@@ -71,14 +71,6 @@ public class RecordsActivity extends AppCompatActivity {
 
             INITIALIZED = true;
         }
-
-        AppDatabase.getDb(this).recordDAO().findAll().observe(this,
-                records -> {
-                    if(records != null) {
-                        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1, records);
-                        recordListView.setAdapter(adapter);
-                    }
-                });
         //updateAdapter();
 
         recordListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -215,7 +207,7 @@ public class RecordsActivity extends AppCompatActivity {
                 setPositiveButton(R.string.yes, (dialog, which) -> {
                     ArrayList<Integer> selected = getSelectedItemsArray();
                     for(int i = selected.size() - 1; i >= 0; i--){
-                        new RecordFileDAO(this).remove(selected.get(i));
+                        AppDatabase.getDb(this).recordDAO().remove(selected.get(i));
                         Log.d("REMOVING", "removed " + selected.get(i));
                     }
                 }).

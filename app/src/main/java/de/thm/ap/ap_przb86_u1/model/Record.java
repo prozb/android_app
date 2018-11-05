@@ -3,26 +3,27 @@ package de.thm.ap.ap_przb86_u1.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
 
 @Entity
 public class Record implements Serializable {
     @PrimaryKey
-    private int id;
+    private Integer id;
 
     private String moduleNum;
     private String moduleName;
     private boolean summerTerm;
     private boolean isHalfWeighted;
-    private int credits;
-    private int mark;
-    private int year;
+    private Integer credits;
+    private Integer mark;
+    private Integer year;
 
     public Record(){
 
     }
 
-    public Record(String moduleNumber, String moduleName, int year, boolean summerTerm, boolean isHalfWeighted, int credits, int mark){
+    public Record(String moduleNumber, String moduleName, Integer year, boolean summerTerm, boolean isHalfWeighted, Integer credits, Integer mark){
         this.moduleNum    = moduleNumber;
         this.moduleName   = moduleName;
         this.summerTerm   = summerTerm;
@@ -50,7 +51,7 @@ public class Record implements Serializable {
         return result;
     }
 
-    public void setId(int id){
+    public void setId(Integer id){
         this.id = id;
     }
 
@@ -66,11 +67,11 @@ public class Record implements Serializable {
         this.summerTerm = summerTerm;
     }
 
-    public void setCredits(int credits) {
+    public void setCredits(Integer credits) {
         this.credits = credits;
     }
 
-    public void setMark(int note) {
+    public void setMark(Integer note) {
         this.mark = note;
     }
 
@@ -86,11 +87,11 @@ public class Record implements Serializable {
         return summerTerm;
     }
 
-    public int getCredits() {
+    public Integer getCredits() {
         return credits;
     }
 
-    public int getMark() {
+    public Integer getMark() {
         return mark;
     }
 
@@ -102,7 +103,7 @@ public class Record implements Serializable {
         this.isHalfWeighted = halfWeighted;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 

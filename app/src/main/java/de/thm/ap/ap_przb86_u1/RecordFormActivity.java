@@ -66,7 +66,7 @@ public class RecordFormActivity extends AppCompatActivity {
     }
 
     public void showRecordValues(int position){
-        Record record = new RecordFileDAO(this).getRecord(position);
+        Record record = AppDatabase.getDb(this).recordDAO().findById(position);
         this.positionInList = position;
         this.updateFlag = true;
 
@@ -138,14 +138,14 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setIsHalfWeighted(halfWeightedCheckbox.isChecked());
             record.setSummerTerm(soseCheckbox.isChecked());
 
-            if(updateFlag && new RecordFileDAO(this).getRecord(positionInList) != null){
+            if(updateFlag && AppDatabase.getDb(this).recordDAO().findById(positionInList) != null){
                 this.updateFlag = false;
 
                 record.setId(++positionInList);
-                new RecordFileDAO(this).update(record);
+                AppDatabase.getDb(this).recordDAO().update(record);
 
             }else {
-                new RecordFileDAO(this).persist(record);
+                AppDatabase.getDb(this).recordDAO().persist(record);
             }
             finish();
         }
