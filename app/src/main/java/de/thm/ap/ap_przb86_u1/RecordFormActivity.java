@@ -71,19 +71,8 @@ public class RecordFormActivity extends AppCompatActivity {
     }
 
     public void showRecordValues(int position){
-        ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
-        Future<Record> recordFuture = getByIdExecutor.submit(() -> AppDatabase.getDb(this)
-                .recordDAO()
-                .findById(position));
+        Record record = getRecordByPos(position);
 
-        Record record = null;
-        try {
-            record = recordFuture.get();
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e("ERROR", e.toString());
-            return;
-        }
-//        Record record =
         this.positionInList = position;
         this.updateFlag = true;
 
@@ -177,7 +166,7 @@ public class RecordFormActivity extends AppCompatActivity {
         ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
         Future<Record> recordFuture = getByIdExecutor.submit(() -> AppDatabase.getDb(this)
                 .recordDAO()
-                .findById(pos));
+                .findById(pos + 1));
 
         Record record = null;
         try {
