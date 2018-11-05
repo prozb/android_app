@@ -15,6 +15,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
 
@@ -66,13 +71,25 @@ public class RecordFormActivity extends AppCompatActivity {
     }
 
     public void showRecordValues(int position){
-        Record record = AppDatabase.getDb(this).recordDAO().findById(position);
+        ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
+        Future<Record> recordFuture = getByIdExecutor.submit(() -> AppDatabase.getDb(this)
+                .recordDAO()
+                .findById(position));
+
+        Record record = null;
+        try {
+            record = recordFuture.get();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e("ERROR", e.toString());
+            return;
+        }
+//        Record record =
         this.positionInList = position;
         this.updateFlag = true;
 
             moduleNum.setText(record.getModuleNum());
             moduleName.setText(record.getModuleName());
-            mark.setText(record.getMark());
+            mark.setText(String.valueOf(record.getMark()));
             soseCheckbox.setChecked(record.isSummerTerm());
             halfWeightedCheckbox.setChecked(record.isHalfWeighted());
             creditPoints.setText(String.valueOf(record.getCredits()));
@@ -138,17 +155,37 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setIsHalfWeighted(halfWeightedCheckbox.isChecked());
             record.setSummerTerm(soseCheckbox.isChecked());
 
-            if(updateFlag && AppDatabase.getDb(this).recordDAO().findById(positionInList) != null){
+
+            Record recordInDAO = getRecordByPos(positionInList);
+            if(updateFlag && recordInDAO != null){
                 this.updateFlag = false;
 
                 record.setId(++positionInList);
-                AppDatabase.getDb(this).recordDAO().update(record);
+                Executors.newSingleThreadExecutor().submit(() -> AppDatabase.getDb(this)
+                        .recordDAO()
+                        .update(record));
 
             }else {
-                AppDatabase.getDb(this).recordDAO().persist(record);
+                Executors.newSingleThreadExecutor().submit(() -> AppDatabase.getDb(this)
+                        .recordDAO()
+                        .persist(record));
             }
             finish();
         }
+    }
+    private Record getRecordByPos(int pos){
+        ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
+        Future<Record> recordFuture = getByIdExecutor.submit(() -> AppDatabase.getDb(this)
+                .recordDAO()
+                .findById(pos));
+
+        Record record = null;
+        try {
+            record = recordFuture.get();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e("ERROR", e.toString());
+        }
+        return record;
     }
 
     private ArrayList<Integer> getYears(){
