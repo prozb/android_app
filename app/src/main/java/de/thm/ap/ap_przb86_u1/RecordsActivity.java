@@ -15,19 +15,16 @@ import android.view.MenuItem;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
 
 public class RecordsActivity extends AppCompatActivity {
-    private static boolean DEBUGGING = true;
+    private static boolean DEBUGGING = false;
     private boolean INITIALIZED = false;
     private ListView recordListView;
     private ArrayAdapter<Record> adapter;
@@ -53,9 +50,10 @@ public class RecordsActivity extends AppCompatActivity {
                         RecordsActivity.this.recordListView.setAdapter(adapter);
                     }
                 });
+        AppDatabase.getDb(this).recordDAO().findAll();
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
             Intent i = new Intent(RecordsActivity.this, RecordFormActivity.class);
-            i.putExtra("position", position);
+            i.putExtra("position", records.get(position).getId());
 
             startActivity(i);
         });
@@ -79,7 +77,6 @@ public class RecordsActivity extends AppCompatActivity {
 //            }
             INITIALIZED = true;
         }
-//        List<Record> records = getAllRecords();
 
         recordListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -101,7 +98,9 @@ public class RecordsActivity extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.action_delete:
                         Log.d("PRESSED", "delete action in choose menu performed");
+                        Toast.makeText(RecordsActivity.this, "records: " + records.size(), Toast.LENGTH_SHORT).show();
                         deleteSelectedItems();
+                        Toast.makeText(RecordsActivity.this, "lol records: " + records.size(), Toast.LENGTH_SHORT).show();
 //                        updateAdapter();
                         mode.finish();
                         return true;
@@ -161,41 +160,7 @@ public class RecordsActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-//        if(DEBUGGING && !INITIALIZED){
-//            RecordFileDAO recordFileDAO = new RecordFileDAO(this);
-//            recordFileDAO.persist(new Record("CS1013", "Objektorientierte Programmierung", 2016, true, true, 6, 73));
-//            recordFileDAO.persist(new Record("MN1007", "Diskrete Mathematik", 2016, false, true, 6, 81));
-//            recordFileDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
-//            recordFileDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
-//
-//            INITIALIZED = true;
-//        }
-//
-//        adapter.clear();
-//        adapter.addAll(new RecordFileDAO(this).findAll());
-
-//
-//        if(DEBUGGING && !INITIALIZED){
-//            RecordFileDAO recordFileDAO = new RecordFileDAO(this);
-//            recordFileDAO.persist(new Record("CS1013", "Objektorientierte Programmierung", 2016, true, true, 6, 73));
-//            recordFileDAO.persist(new Record("MN1007", "Diskrete Mathematik", 2016, false, true, 6, 81));
-//            recordFileDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
-//            recordFileDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
-//
-//            INITIALIZED = true;
-//        }
-//
-//        updateAdapter();
      }
-
-
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//
-//        new RecordFileDAO(this).close();
-//    }
 
     private void updateAdapter(){
         RecordsActivity.this.adapter.clear();
@@ -211,15 +176,18 @@ public class RecordsActivity extends AppCompatActivity {
         new AlertDialog.Builder(this).
                 setTitle(R.string.confirmation).
                 setMessage(R.string.confirmation_message).
-                setIcon(R.drawable.id_dialog_alert_24dp).
                 setPositiveButton(R.string.yes, (dialog, which) -> {
-                    ArrayList<Integer> selected = getSelectedItemsArray();
-                    for(int i = selected.size() - 1; i >= 0; i--){
-                        AppDatabase.getDb(this).recordDAO().remove(selected.get(i));
-                        Log.d("REMOVING", "removed " + selected.get(i));
-                    }
-                }).
-                setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
+                        ArrayList<Integer> selected = getSelectedItemsArray();
+                        for(int i = selected.size() - 1; i >= 0; i--){
+                            Toast.makeText(this, "records: " + records.size(), Toast.LENGTH_SHORT).show();
+                            removeById(selected.get(i));
+                            Toast.makeText(this, "records: " + records.size(), Toast.LENGTH_SHORT).show();
+                            Log.d("REMOVING", "removed " + selected.get(i));
+                        }
+                        AppDatabase.getDb(RecordsActivity.this).recordDAO().findAll();
+                })
+                .setIcon(R.drawable.id_dialog_alert_24dp)
+                .setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
     }
 
     private String getStatisticsForMail() {
@@ -230,7 +198,7 @@ public class RecordsActivity extends AppCompatActivity {
 
         for(int i = 0; i < selected.size(); i++){
             int pos = selected.get(i);
-            record = new RecordFileDAO(this).getRecord(pos);
+            record = records.get(pos);
 
             if(record != null){
                 sb.append(record.getModuleName());
@@ -277,23 +245,30 @@ public class RecordsActivity extends AppCompatActivity {
 
     // getting selected items from listview
     private ArrayList<Integer> getSelectedItemsArray(){
-        List<Record> records        = new RecordFileDAO(this).findAll();
         ArrayList<Integer> selected = new ArrayList<>();
 
         SparseBooleanArray checkedPositions = recordListView.getCheckedItemPositions();
+        boolean run = true;
 
-        for(int i = 0; i < records.size(); i++){
-            if(checkedPositions.valueAt(i)){
-                int selectedElem = checkedPositions.keyAt(i);
+        for(int i = 0; i < this.records.size() && run; i++){
+            try {
+                if (checkedPositions.valueAt(i)) {
+                    int selectedElem = checkedPositions.keyAt(i);
 
-                selected.add(selectedElem);
-                Log.d("CHECKED", "selected element is: " + selectedElem);
+                    selected.add(selectedElem);
+                    Log.d("CHECKED", "selected element is: " + selectedElem);
+                }
+            }catch (ArrayIndexOutOfBoundsException e){
+                run = false;
             }
         }
 
         return selected;
     }
 
+    private void removeById(int id){
+        Executors.newSingleThreadExecutor().submit(() -> AppDatabase.getDb(this).recordDAO().remove(id + 1));
+    }
     private List<Record> getAllRecords(){
 //        ExecutorService findAllExecutor = Executors.newSingleThreadExecutor();
 //        Future<LiveData<List<Record>>> recordFuture = findAllExecutor.submit(() -> AppDatabase.getDb(this)

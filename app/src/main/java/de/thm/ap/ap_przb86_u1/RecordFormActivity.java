@@ -75,6 +75,7 @@ public class RecordFormActivity extends AppCompatActivity {
         this.positionInList = position;
         this.updateFlag = true;
 
+        if(record != null) {
             moduleNum.setText(record.getModuleNum());
             moduleName.setText(record.getModuleName());
             mark.setText(String.valueOf(record.getMark()));
@@ -82,6 +83,7 @@ public class RecordFormActivity extends AppCompatActivity {
             halfWeightedCheckbox.setChecked(record.isHalfWeighted());
             creditPoints.setText(String.valueOf(record.getCredits()));
             year.setSelection(years.indexOf(record.getYear()));
+        }
     }
 
     @Override
@@ -144,7 +146,7 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setSummerTerm(soseCheckbox.isChecked());
 
 
-            Record recordInDAO = getRecordByPos(positionInList);
+            Record recordInDAO = getRecordByPos(positionInList + 1);
             if(updateFlag && recordInDAO != null){
                 this.updateFlag = false;
 
@@ -165,7 +167,7 @@ public class RecordFormActivity extends AppCompatActivity {
         ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
         Future<Record> recordFuture = getByIdExecutor.submit(() -> AppDatabase.getDb(this)
                 .recordDAO()
-                .findById(pos + 1));
+                .findById(pos));
 
         Record record = null;
         try {
