@@ -271,14 +271,4 @@ public class RecordsActivity extends AppCompatActivity {
                 .recordDAO()
                 .remove(records.get(id).getId()));
     }
-    private List<Record> getAllRecords(){
-//        ExecutorService findAllExecutor = Executors.newSingleThreadExecutor();
-//        Future<LiveData<List<Record>>> recordFuture = findAllExecutor.submit(() -> AppDatabase.getDb(this)
-//                .recordDAO()
-//                .findAll());
-
-        LiveData<List<Record>> records = AppDatabase.getDb(this).recordDAO().findAll();
-
-        return records.getValue();
-    }
 }
