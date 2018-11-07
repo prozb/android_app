@@ -39,7 +39,6 @@ public class RecordsActivity extends AppCompatActivity {
         sb = new StringBuilder();
         recordListView = findViewById(R.id.records_list);
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
-        //List<Record> records = getAllRecords();
 
         AppDatabase.getDb(this).recordDAO().findAll().observe(this,
                 records -> {
@@ -50,7 +49,7 @@ public class RecordsActivity extends AppCompatActivity {
                         RecordsActivity.this.recordListView.setAdapter(adapter);
                     }
                 });
-        AppDatabase.getDb(this).recordDAO().findAll();
+//        AppDatabase.getDb(this).recordDAO().findAll();
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
             Intent i = new Intent(RecordsActivity.this, RecordFormActivity.class);
             i.putExtra("position", records.get(position).getId());
