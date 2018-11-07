@@ -19,7 +19,10 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
 
@@ -28,6 +31,7 @@ public class RecordsActivity extends AppCompatActivity {
     private boolean INITIALIZED = false;
     private ListView recordListView;
     private ArrayAdapter<Record> adapter;
+    private List<Record> records;
     private StringBuilder sb;
 
     @Override
@@ -38,11 +42,15 @@ public class RecordsActivity extends AppCompatActivity {
         sb = new StringBuilder();
         recordListView = findViewById(R.id.records_list);
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
+        //List<Record> records = getAllRecords();
+
         AppDatabase.getDb(this).recordDAO().findAll().observe(this,
                 records -> {
                     if(records != null) {
-                        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1, records);
-                        recordListView.setAdapter(adapter);
+                        RecordsActivity.this.records = records;
+                        RecordsActivity.this.adapter = new ArrayAdapter<>(this,
+                                android.R.layout.simple_list_item_activated_1, records);
+                        RecordsActivity.this.recordListView.setAdapter(adapter);
                     }
                 });
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
@@ -54,24 +62,24 @@ public class RecordsActivity extends AppCompatActivity {
         recordListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
         if(DEBUGGING && !INITIALIZED){
-            Executors.newSingleThreadExecutor()
-                    .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
-                            "CS1013", "Objektorientierte Programmierung",
-                            2016, true, true, 6, 73)));
-            Executors.newSingleThreadExecutor()
-                    .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
-                            "MN1007", "Diskrete Mathematik",
-                            2016, false, true, 6, 81)));
-            Executors.newSingleThreadExecutor()
-                    .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
-                            "LEL", "LUL",
-                            2016, false, true, 6, 81)));
-//            recordDAO.persist(new Record("CS1019", "Compilerbau", 2017, false, false, 6, 81));
-//            recordDAO.persist(new Record("CS1020", "Datenbanksysteme", 2017, false, false, 6, 92));
-
+//            List<Record> records = getAllRecords();
+//            if(records == null || records.size() == 0) {
+                Executors.newSingleThreadExecutor()
+                        .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                                "CS1013", "Objektorientierte Programmierung",
+                                2016, true, true, 6, 73)));
+                Executors.newSingleThreadExecutor()
+                        .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                                "MN1007", "Diskrete Mathematik",
+                                2016, false, true, 6, 81)));
+                Executors.newSingleThreadExecutor()
+                        .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                                "LEL", "LUL",
+                                2016, false, true, 6, 81)));
+//            }
             INITIALIZED = true;
         }
-        //updateAdapter();
+//        List<Record> records = getAllRecords();
 
         recordListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -250,7 +258,7 @@ public class RecordsActivity extends AppCompatActivity {
     }
 
     private String getStatistics(){
-        Stats stats = new Stats(new RecordFileDAO(this).findAll());
+        Stats stats = new Stats(records);
 
         sb.setLength(0);
         sb.append("Leistungen: ");
@@ -261,7 +269,7 @@ public class RecordsActivity extends AppCompatActivity {
         sb.append(stats.getSumCrp());
         sb.append("\nDurchschnitt: ");
         sb.append(stats.getAverageMark());
-        sb.append("%n\nCrp bis Ziel: ");
+        sb.append("%\nCrp bis Ziel: ");
         sb.append(stats.getCrpToEnd());
 
         return sb.toString();
@@ -284,5 +292,16 @@ public class RecordsActivity extends AppCompatActivity {
         }
 
         return selected;
+    }
+
+    private List<Record> getAllRecords(){
+//        ExecutorService findAllExecutor = Executors.newSingleThreadExecutor();
+//        Future<LiveData<List<Record>>> recordFuture = findAllExecutor.submit(() -> AppDatabase.getDb(this)
+//                .recordDAO()
+//                .findAll());
+
+        LiveData<List<Record>> records = AppDatabase.getDb(this).recordDAO().findAll();
+
+        return records.getValue();
     }
 }

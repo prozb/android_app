@@ -3,7 +3,6 @@ package de.thm.ap.ap_przb86_u1.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.io.PrintWriter;
 import java.io.Serializable;
 
 @Entity
@@ -22,6 +21,7 @@ public class Record implements Serializable {
     public Record(){
 
     }
+
 
     public Record(String moduleNumber, String moduleName, Integer year, boolean summerTerm, boolean isHalfWeighted, Integer credits, Integer mark){
         this.moduleNum    = moduleNumber;
