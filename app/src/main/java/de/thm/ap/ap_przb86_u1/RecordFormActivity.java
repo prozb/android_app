@@ -146,11 +146,11 @@ public class RecordFormActivity extends AppCompatActivity {
             record.setSummerTerm(soseCheckbox.isChecked());
 
 
-            Record recordInDAO = getRecordByPos(positionInList + 1);
+            Record recordInDAO = getRecordByPos(positionInList);
             if(updateFlag && recordInDAO != null){
                 this.updateFlag = false;
 
-                record.setId(++positionInList);
+                record.setId(positionInList);
                 Executors.newSingleThreadExecutor().submit(() -> AppDatabase.getDb(this)
                         .recordDAO()
                         .update(record));
