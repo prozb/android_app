@@ -267,7 +267,9 @@ public class RecordsActivity extends AppCompatActivity {
     }
 
     private void removeById(int id){
-        Executors.newSingleThreadExecutor().submit(() -> AppDatabase.getDb(this).recordDAO().remove(id + 1));
+        Executors.newSingleThreadExecutor().submit(() -> AppDatabase.getDb(this)
+                .recordDAO()
+                .remove(records.get(id).getId()));
     }
     private List<Record> getAllRecords(){
 //        ExecutorService findAllExecutor = Executors.newSingleThreadExecutor();
