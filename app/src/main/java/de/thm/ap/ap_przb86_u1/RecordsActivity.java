@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -54,10 +56,23 @@ public class RecordsActivity extends AppCompatActivity {
                 });
 //        AppDatabase.getDb(this).recordDAO().findAll();
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
-            Intent i = new Intent(RecordsActivity.this, RecordFormActivity.class);
-            i.putExtra("position", records.get(position).getId());
+            if(getIntent().getAction().equals(Intent.ACTION_PICK)){
+                Log.d("ACTION", "action pick performed");
+                int recordId = 0;
+                try {
+                    recordId = records.get(position).getId();
+                }catch (Exception e){
+                    setResult(RESULT_CANCELED);
+                }
+                Uri uriSelected = Uri.parse("content//content://de.thm.ap.ap_przb86_u1.cp/records-db/" + recordId);
+                setResult(RESULT_OK, new Intent().setData(uriSelected));
+                finish();
+            }else {
+                Intent i = new Intent(RecordsActivity.this, RecordFormActivity.class);
+                i.putExtra("position", records.get(position).getId());
 
-            startActivity(i);
+                startActivity(i);
+            }
         });
         recordListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
                 boolean isIntentSafe = activities.size() > 0;
                 if(isIntentSafe) {
-                    startActivity(intent);
+                    startActivityForResult(intent, 1);
                 }
             }
         });
@@ -75,8 +76,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void testRecordsRequest(){
-        Uri uri = Uri.parse("content://de.thm.ap.ap_przb86_u1.cp/records-db/1000");
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                Uri contactData = data.getData();
+                Log.d("GET_URI",  Objects.requireNonNull(contactData).toString());
+                testRecordsRequest(contactData.getLastPathSegment());
+                break;
+            default:
+                Log.d("GET_URI", "failed");
+                break;
+        }
+    }
+
+    private void testRecordsRequest(String id){
+        Uri uri = Uri.parse("content://de.thm.ap.ap_przb86_u1.cp/records-db/" + id);
         ContentResolver cr = getContentResolver();
 
         String [] projection = {"id", "moduleName"};
