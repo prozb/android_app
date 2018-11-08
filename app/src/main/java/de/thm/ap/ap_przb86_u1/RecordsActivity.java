@@ -42,11 +42,14 @@ public class RecordsActivity extends AppCompatActivity {
 
         AppDatabase.getDb(this).recordDAO().findAll().observe(this,
                 records -> {
-                    if(records != null) {
+                    if(adapter == null) {
                         RecordsActivity.this.records = records;
                         RecordsActivity.this.adapter = new ArrayAdapter<>(this,
                                 android.R.layout.simple_list_item_activated_1, records);
                         RecordsActivity.this.recordListView.setAdapter(adapter);
+                    }else{
+                        RecordsActivity.this.adapter.clear();
+                        RecordsActivity.this.adapter.addAll(records);
                     }
                 });
 //        AppDatabase.getDb(this).recordDAO().findAll();
@@ -258,10 +261,10 @@ public class RecordsActivity extends AppCompatActivity {
                     Log.d("CHECKED", "selected element is: " + selectedElem);
                 }
             }catch (ArrayIndexOutOfBoundsException e){
-                run = false;
-            }
-        }
 
+        run = false;
+    }
+}
         return selected;
     }
 

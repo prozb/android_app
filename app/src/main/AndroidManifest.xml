@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.thm.ap.ap_przb86_u1">
+    <permission
+        android:name="de.thm.ap.ap_przb86_u1.permission.ACCESS_PROVIDER"
+        android:protectionLevel="normal"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-=
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:authorities="de.thm.ap.ap_przb86_u1.cp"
+            android:name="de.thm.ap.ap_przb86_u1.cp.AppContentProvider"
+            android:exported="true"
+            android:permission="de.thm.ap.ap_przb86_u1.permission.ACCESS_PROVIDER">
+        </provider>
         <activity android:name=".RecordsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecordFormActivity"></activity>
+        <activity android:name=".RecordFormActivity" />
     </application>
 
 </manifest>

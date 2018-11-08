@@ -1,4 +1,4 @@
-package de.thm.ap.ap_przb86_u1;
+package de.thm.ap.ap_przb86_u1.cp;
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.db.SupportSQLiteQueryBuilder;
@@ -12,10 +12,12 @@ import android.os.ParcelFileDescriptor;
 
 import java.io.FileNotFoundException;
 
-public class AppContentProvider extends ContentProvider {
-    public static String AUTHORITY = "de.thm.ap.ap_przb86_u1";
+import de.thm.ap.ap_przb86_u1.AppDatabase;
 
-    private static String RECORD_PATH = "record-db";
+public class AppContentProvider extends ContentProvider {
+    public static String AUTHORITY = "de.thm.ap.ap_przb86_u1.cp";
+
+    private static String RECORD_PATH = "records-db";
     private static UriMatcher URI_MATCHER;
     private static final int RECORDS   = 1;
     private static final int RECORD_ID = 2;
@@ -38,9 +40,9 @@ public class AppContentProvider extends ContentProvider {
     public String getType(Uri uri) {
         switch (URI_MATCHER.match(uri)){
             case RECORDS:
-                return "vnd.android.cursor.dir/vnd.thm.ap.record";
+                return "vnd.android.cursor.dir/vnd.thm.ap.ap_przb86_u1";
             case RECORD_ID:
-                return "vnd.android.cursor.item/vnd.thm.ap.record";
+                return "vnd.android.cursor.item/vnd.thm.ap.ap_przb86_u1";
             default:
                     throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
