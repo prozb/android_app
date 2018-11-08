@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.db.SupportSQLiteQueryBuilder;
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.thm.ap.ap_przb86_u1.AppDatabase;
+import de.thm.ap.ap_przb86_u1.RecordsActivity;
 import de.thm.ap.ap_przb86_u1.model.Record;
 
 public class AppContentProvider extends ContentProvider {
@@ -92,7 +94,8 @@ public class AppContentProvider extends ContentProvider {
         ParcelFileDescriptor pfd;
         Log.d("CREATING", "created file");
 
-        String toWrite = "AMKAMKAMKAMKAMKAMKAMKA";
+        createCSVData();
+        String toWrite = getStringifiedRecords();
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(file));
@@ -112,35 +115,6 @@ public class AppContentProvider extends ContentProvider {
         pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
         return pfd;
     }
-
-    //
-//    @Override
-//    public ParcelFileDescriptor openFile(Uri uri,String mode, CancellationSignal signal) throws FileNotFoundException {
-//
-//        File file = new File(getContext().getFilesDir(), uri.getLastPathSegment());
-//        ParcelFileDescriptor pfd;
-//        Log.d("CREATING", "created file");
-//
-//        String toWrite = getStringifiedRecords();
-//        BufferedWriter writer = null;
-//        try {
-//            writer = new BufferedWriter(new FileWriter(file));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        if(writer != null){
-//            try {
-//                writer.write(toWrite);
-//                writer.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-//        return pfd;
-//    }
 
     private String getStringifiedRecords(){
         return "Hello world";
@@ -162,13 +136,15 @@ public class AppContentProvider extends ContentProvider {
     }
 
     private void createCSVData(){
-        FileOutputStream out;
-        String fileName = "leistungen.csv";
-        File dir = new File(Objects.requireNonNull(getContext()).getCacheDir(), fileName);
-
         sb.setLength(0);
-        LiveData<List<Record>> records = AppDatabase.getDb(getContext()).recordDAO().findAll();
+        SupportSQLiteQueryBuilder builder = SupportSQLiteQueryBuilder.builder("Record");
+        SupportSQLiteDatabase db = AppDatabase.getDb(getContext()).getOpenHelper().getReadableDatabase();
+        Cursor c = db.query(builder.create());
 
-
+        if(c != null){
+            while (c.moveToNext()){
+//                sb.append(c.)
+            }
+        }
     }
 }

@@ -46,41 +46,48 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-//                Uri uri = Uri.parse("content://de.thm.ap.ap_przb86_u1.cp/records-db/4");
-//                ContentResolver cr = getContentResolver();
-//
-//                String [] projection = {"id", "moduleName"};
-//                Cursor c = cr.query(uri, projection, null, null, "moduleName");
-//
-//                if(c != null){
-//                    Log.d("RESOLVER", "called content resolver");
-//
-//                    while (c.moveToNext()){
-//                        Toast.makeText(MainActivity.this, "id: " + c.getLong(0) + " module name: " + c.getString(1),
-//                                LENGTH_SHORT).show();
-//                        Log.d(TAG, "id: " + c.getLong(0) + " module name: " + c.getString(1));
-//                    }
-//                }
-
-//////////
-                Uri uri = Uri.parse("content://de.thm.ap.ap_przb86_u1.cp/records-db");
-                ContentResolver cr = getContentResolver();
-
-                try {
-                    FileDescriptor descriptor = Objects.requireNonNull(cr.openFileDescriptor(uri, "r")).getFileDescriptor();
-                    FileInputStream reader = new FileInputStream(descriptor);
-
-                    int i;
-                    while((i = reader.read()) != -1){
-                        Log.d(TAG, String.valueOf((char)i));
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                testCSVRequest();
+                testRecordsRequest();
             }
         });
+    }
+
+    private void testRecordsRequest(){
+        Uri uri = Uri.parse("content://de.thm.ap.ap_przb86_u1.cp/records-db/1000");
+        ContentResolver cr = getContentResolver();
+
+        String [] projection = {"id", "moduleName"};
+        Cursor c = cr.query(uri, projection, null, null, "moduleName");
+
+        if(c != null){
+            Log.d("RESOLVER", "called content resolver");
+
+            while (c.moveToNext()){
+                Toast.makeText(MainActivity.this, "id: " + c.getLong(0) + " module name: " + c.getString(1),
+                        LENGTH_SHORT).show();
+                Log.d(TAG, "id: " + c.getLong(0) + " module name: " + c.getString(1));
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void testCSVRequest(){
+        Uri uri = Uri.parse("content://de.thm.ap.ap_przb86_u1.cp/records-db");
+        ContentResolver cr = getContentResolver();
+
+        try {
+            FileDescriptor descriptor = Objects.requireNonNull(cr.openFileDescriptor(uri, "r")).getFileDescriptor();
+            FileInputStream reader = new FileInputStream(descriptor);
+
+            int i;
+            while((i = reader.read()) != -1){
+                Log.d(TAG, String.valueOf((char)i));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

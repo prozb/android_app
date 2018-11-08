@@ -14,7 +14,6 @@ import de.thm.ap.ap_przb86_u1.model.Record;
 @Dao
 public interface RecordDAO {
     @Query("select * from record")
-//    List<Record> findAll();
     LiveData<List<Record>> findAll();
 
     @Query("select * from record where id = :id")
