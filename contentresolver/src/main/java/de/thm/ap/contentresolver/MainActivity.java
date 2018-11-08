@@ -1,6 +1,9 @@
 package de.thm.ap.contentresolver;
 
 import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -25,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Objects;
 
 import static android.widget.Toast.LENGTH_SHORT;
@@ -39,12 +43,30 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab    = findViewById(R.id.fab);
+        FloatingActionButton getFan = findViewById(R.id.get);
+        getFan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v, "sent pick request", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                PackageManager packageManager = getPackageManager();
+                List<ResolveInfo> activities = packageManager.queryIntentActivities(
+                        intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+                boolean isIntentSafe = activities.size() > 0;
+                if(isIntentSafe) {
+                    startActivity(intent);
+                }
+            }
+        });
         fab.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Sent request to database", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 testCSVRequest();
@@ -80,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
             FileDescriptor descriptor = Objects.requireNonNull(cr.openFileDescriptor(uri, "r")).getFileDescriptor();
             FileInputStream reader = new FileInputStream(descriptor);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(reader));
-            StringBuilder sb = new StringBuilder();
             String line = "";
             while((line = bufferedReader.readLine()) != null){
                 Log.d(TAG, line);
