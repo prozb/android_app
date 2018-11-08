@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Objects;
 
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-//                testCSVRequest();
-                testRecordsRequest();
+                testCSVRequest();
+//                testRecordsRequest();
             }
         });
     }
@@ -78,15 +79,14 @@ public class MainActivity extends AppCompatActivity {
         try {
             FileDescriptor descriptor = Objects.requireNonNull(cr.openFileDescriptor(uri, "r")).getFileDescriptor();
             FileInputStream reader = new FileInputStream(descriptor);
-
-            int i;
-            while((i = reader.read()) != -1){
-                Log.d(TAG, String.valueOf((char)i));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(reader));
+            StringBuilder sb = new StringBuilder();
+            String line = "";
+            while((line = bufferedReader.readLine()) != null){
+                Log.d(TAG, line);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e){
+            Log.e("ERROR", e.toString());
         }
     }
 

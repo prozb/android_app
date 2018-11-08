@@ -94,8 +94,7 @@ public class AppContentProvider extends ContentProvider {
         ParcelFileDescriptor pfd;
         Log.d("CREATING", "created file");
 
-        createCSVData();
-        String toWrite = getStringifiedRecords();
+        String toWrite = createCSVData();
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(file));
@@ -135,16 +134,25 @@ public class AppContentProvider extends ContentProvider {
         return 0;
     }
 
-    private void createCSVData(){
+    private String createCSVData(){
         sb.setLength(0);
         SupportSQLiteQueryBuilder builder = SupportSQLiteQueryBuilder.builder("Record");
         SupportSQLiteDatabase db = AppDatabase.getDb(getContext()).getOpenHelper().getReadableDatabase();
         Cursor c = db.query(builder.create());
 
         if(c != null){
-            while (c.moveToNext()){
-//                sb.append(c.)
+            c.moveToFirst();
+            for(int i = 0; i < c.getCount(); i++){
+                for(int j = 0; j < c.getColumnNames().length; j++){
+                    sb.append(c.getString(j));
+                    sb.append(",");
+                }
+                sb.append("\n");
+                c.moveToNext();
             }
+            c.close();
         }
+
+        return sb.toString();
     }
 }
