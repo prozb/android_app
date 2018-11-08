@@ -1,5 +1,6 @@
 package de.thm.ap.ap_przb86_u1.cp;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.db.SupportSQLiteQueryBuilder;
 import android.content.ContentProvider;
@@ -9,10 +10,21 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
 
 import de.thm.ap.ap_przb86_u1.AppDatabase;
+import de.thm.ap.ap_przb86_u1.model.Record;
 
 public class AppContentProvider extends ContentProvider {
     public static String AUTHORITY = "de.thm.ap.ap_przb86_u1.cp";
@@ -21,6 +33,8 @@ public class AppContentProvider extends ContentProvider {
     private static UriMatcher URI_MATCHER;
     private static final int RECORDS   = 1;
     private static final int RECORD_ID = 2;
+    private static final int LOL_TXT   = 3;
+    private static StringBuilder sb = new StringBuilder();
 
     static {
         URI_MATCHER = new UriMatcher(URI_MATCHER.NO_MATCH);
@@ -54,13 +68,14 @@ public class AppContentProvider extends ContentProvider {
                 .builder("Record")
                 .columns(projection)
                 .orderBy(sortOrder);
-
+        Log.e("QUERRY", "LOL?s" + URI_MATCHER.match(uri));
         switch (URI_MATCHER.match(uri)){
             case RECORDS:
                 break;
             case RECORD_ID:
                 builder.selection("id = ?", new Object [] {uri.getLastPathSegment()});
                 break;
+
                 default:
                     throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -72,8 +87,63 @@ public class AppContentProvider extends ContentProvider {
     }
 
     @Override
-    public ParcelFileDescriptor openFile(Uri uri,String mode, CancellationSignal signal) throws FileNotFoundException {
-        return super.openFile(uri, mode, signal);
+    public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
+        File file = new File(getContext().getFilesDir(), "lol.csv");
+        ParcelFileDescriptor pfd;
+        Log.d("CREATING", "created file");
+
+        String toWrite = "AMKAMKAMKAMKAMKAMKAMKA";
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(writer != null){
+            try {
+                writer.write(toWrite);
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.d("CREATED", "file sent");
+        pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+        return pfd;
+    }
+
+    //
+//    @Override
+//    public ParcelFileDescriptor openFile(Uri uri,String mode, CancellationSignal signal) throws FileNotFoundException {
+//
+//        File file = new File(getContext().getFilesDir(), uri.getLastPathSegment());
+//        ParcelFileDescriptor pfd;
+//        Log.d("CREATING", "created file");
+//
+//        String toWrite = getStringifiedRecords();
+//        BufferedWriter writer = null;
+//        try {
+//            writer = new BufferedWriter(new FileWriter(file));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        if(writer != null){
+//            try {
+//                writer.write(toWrite);
+//                writer.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+//        return pfd;
+//    }
+
+    private String getStringifiedRecords(){
+        return "Hello world";
     }
 
     @Override
@@ -89,5 +159,16 @@ public class AppContentProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
+    }
+
+    private void createCSVData(){
+        FileOutputStream out;
+        String fileName = "leistungen.csv";
+        File dir = new File(Objects.requireNonNull(getContext()).getCacheDir(), fileName);
+
+        sb.setLength(0);
+        LiveData<List<Record>> records = AppDatabase.getDb(getContext()).recordDAO().findAll();
+
+
     }
 }
