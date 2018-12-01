@@ -32,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "AsyncTask started", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
-
-                new Task().execute();
             }
         });
     }

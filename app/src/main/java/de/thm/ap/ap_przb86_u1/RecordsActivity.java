@@ -163,12 +163,11 @@ public class RecordsActivity extends AppCompatActivity {
                 Log.d("PRESSED", "add module action in menu performed");
                 Intent i = new Intent(this, RecordFormActivity.class);
                 startActivity(i);
-//                updateAdapter();
                 return true;
 
             case R.id.action_stats:
                 Log.d("PRESSED", "statistics action in menu performed");
-                showStatisticAlert();
+                new StatsTask(this).execute(records);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -181,8 +180,6 @@ public class RecordsActivity extends AppCompatActivity {
 
     private void updateAdapter(){
         RecordsActivity.this.adapter.clear();
-//        LiveData<List<Record>> recordsLive = AppDatabase.getDb(this).recordDAO().findAll();
-//        RecordsActivity.this.adapter.addAll(recordsLive.getValue());
         Executors.newSingleThreadExecutor()
                 .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
                         "CS50", "Programmierung",
@@ -234,16 +231,16 @@ public class RecordsActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    private void showStatisticAlert() {
+    public void showStatisticAlert(String stats) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.stats);
-        builder.setMessage(getStatistics());
+        builder.setMessage(stats);
         builder.setNeutralButton(R.string.close, null);
         builder.show();
     }
 
-    private String getStatistics(){
-        Stats stats = new Stats(records);
+    public void setStatistics(Stats stats){
+//        Stats stats = new Stats(records);
 
         sb.setLength(0);
         sb.append("Leistungen: ");
@@ -257,7 +254,7 @@ public class RecordsActivity extends AppCompatActivity {
         sb.append("%\nCrp bis Ziel: ");
         sb.append(stats.getCrpToEnd());
 
-        return sb.toString();
+        showStatisticAlert(sb.toString());
     }
 
     // getting selected items from listview
