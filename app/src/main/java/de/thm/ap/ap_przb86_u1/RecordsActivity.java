@@ -1,6 +1,5 @@
 package de.thm.ap.ap_przb86_u1;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -13,12 +12,13 @@ import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -29,6 +29,7 @@ public class RecordsActivity extends AppCompatActivity {
     private static boolean DEBUGGING = false;
     private boolean INITIALIZED = false;
     private ListView recordListView;
+    private ProgressBar progressBar;
     private ArrayAdapter<Record> adapter;
     private List<Record> records;
     private StringBuilder sb;
@@ -39,7 +40,9 @@ public class RecordsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_records);
 
         sb = new StringBuilder();
+
         recordListView = findViewById(R.id.records_list);
+
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
 
         AppDatabase.getDb(this).recordDAO().findAll().observe(this,
@@ -167,6 +170,9 @@ public class RecordsActivity extends AppCompatActivity {
 
             case R.id.action_stats:
                 Log.d("PRESSED", "statistics action in menu performed");
+                progressBar = findViewById(R.id.indeterminate_bar);
+                progressBar.setVisibility(View.VISIBLE);
+
                 new StatsTask(this).execute(records);
                 return true;
         }
@@ -284,5 +290,9 @@ public class RecordsActivity extends AppCompatActivity {
         Executors.newSingleThreadExecutor().submit(() -> AppDatabase.getDb(this)
                 .recordDAO()
                 .remove(records.get(id).getId()));
+    }
+
+    public void stopProgressBar(){
+        progressBar.setVisibility(View.GONE);
     }
 }

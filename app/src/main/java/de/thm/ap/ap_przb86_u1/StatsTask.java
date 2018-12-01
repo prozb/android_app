@@ -41,6 +41,7 @@ public class StatsTask extends AsyncTask<List<Record>, Void, Stats> {
         // stop progress bar
         // show result dialog
         Log.i(StatsTask.class.getName(), "Showing statistics");
+        recordsActivity.stopProgressBar();
         recordsActivity.setStatistics(stats);
     }
 
