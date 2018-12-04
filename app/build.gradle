@@ -35,5 +35,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "android.arch.work:work-runtime:1.0.0-alpha11"
     implementation 'com.google.code.gson:gson:2.8.2'
-
+    implementation 'commons-io:commons-io:2.4'
 }

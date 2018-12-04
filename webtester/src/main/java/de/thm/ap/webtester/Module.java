@@ -1,4 +1,4 @@
-package de.thm.ap.ap_przb86_u1;
+package de.thm.ap.webtester;
 
 public class Module {
     private String nr;
