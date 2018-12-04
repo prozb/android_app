@@ -18,6 +18,7 @@ import androidx.work.WorkerParameters;
 
 public class UpdateModulesWorker extends Worker {
     private static final String MODULES_URL = "https://homepages.thm.de/~hg10187/modules.json";
+//    private ModuleDAO moduleDAO = AppDatabase.
 
     public UpdateModulesWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -26,6 +27,7 @@ public class UpdateModulesWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+
         SharedPreferences sharedPreferences = getApplicationContext()
                                             .getSharedPreferences("modules", Context.MODE_PRIVATE);
         HttpURLConnection connection = null;
@@ -43,8 +45,8 @@ public class UpdateModulesWorker extends Worker {
                 Module [] modules = new Gson().fromJson(new InputStreamReader(inputStream), Module[].class);
 
                 //TODO: implement moduleDAO to store modules like:
-                // moduleDAO.deleteAll();
-                // moduleDAO.persistAll(modules);
+                 moduleDAO.deleteAll();
+                 moduleDAO.persistAll(modules);
 
                 // update last modified after pulling json file
                 sharedPreferences.edit()

@@ -33,6 +33,7 @@ public class RecordsActivity extends AppCompatActivity {
     private ArrayAdapter<Record> adapter;
     private List<Record> records;
     private StringBuilder sb;
+    private RecordDAO recordDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +43,11 @@ public class RecordsActivity extends AppCompatActivity {
         sb = new StringBuilder();
 
         recordListView = findViewById(R.id.records_list);
+        recordDAO      = AppDatabase.getDb(this).recordDAO();
 
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
 
-        AppDatabase.getDb(this).recordDAO().findAll().observe(this,
+        recordDAO.findAll().observe(this,
                 records -> {
                     if(adapter == null) {
                         RecordsActivity.this.records = records;
@@ -57,7 +59,6 @@ public class RecordsActivity extends AppCompatActivity {
                         RecordsActivity.this.adapter.addAll(records);
                     }
                 });
-//        AppDatabase.getDb(this).recordDAO().findAll();
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
             if(getIntent().getAction().equals(Intent.ACTION_PICK)){
                 Log.d("ACTION", "action pick performed");
@@ -83,15 +84,15 @@ public class RecordsActivity extends AppCompatActivity {
 //            List<Record> records = getAllRecords();
 //            if(records == null || records.size() == 0) {
                 Executors.newSingleThreadExecutor()
-                        .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                        .submit(() -> recordDAO.persist(new Record(
                                 "CS1013", "Objektorientierte Programmierung",
                                 2016, true, true, 6, 73)));
                 Executors.newSingleThreadExecutor()
-                        .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                        .submit(() -> recordDAO.persist(new Record(
                                 "MN1007", "Diskrete Mathematik",
                                 2016, false, true, 6, 81)));
                 Executors.newSingleThreadExecutor()
-                        .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                        .submit(() -> recordDAO.persist(new Record(
                                 "LEL", "LUL",
                                 2016, false, true, 6, 81)));
 //            }
@@ -187,7 +188,7 @@ public class RecordsActivity extends AppCompatActivity {
     private void updateAdapter(){
         RecordsActivity.this.adapter.clear();
         Executors.newSingleThreadExecutor()
-                .submit(() -> AppDatabase.getDb(this).recordDAO().persist(new Record(
+                .submit(() -> recordDAO.persist(new Record(
                         "CS50", "Programmierung",
                         2016, true, true, 6, 73)));
     }
@@ -204,7 +205,7 @@ public class RecordsActivity extends AppCompatActivity {
                             Toast.makeText(this, "records: " + records.size(), Toast.LENGTH_SHORT).show();
                             Log.d("REMOVING", "removed " + selected.get(i));
                         }
-                        AppDatabase.getDb(RecordsActivity.this).recordDAO().findAll();
+                        recordDAO.findAll();
                 })
                 .setIcon(R.drawable.id_dialog_alert_24dp)
                 .setNegativeButton(R.string.no, (dialog, which) -> Log.d("PRESSED", "don't remove items")).show();
@@ -287,9 +288,8 @@ public class RecordsActivity extends AppCompatActivity {
     }
 
     private void removeById(int id){
-        Executors.newSingleThreadExecutor().submit(() -> AppDatabase.getDb(this)
-                .recordDAO()
-                .remove(records.get(id).getId()));
+        Executors.newSingleThreadExecutor().submit(() ->
+                recordDAO.remove(records.get(id).getId()));
     }
 
     public void stopProgressBar(){
