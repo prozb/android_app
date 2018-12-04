@@ -14,6 +14,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
+
 public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private TextView textView;
@@ -32,7 +38,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "AsyncTask started", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
+                Constraints constraints = new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
+                OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest.Builder(MyWorker.class)
+                        .setConstraints(constraints)
+                        .build();
+                WorkManager.getInstance().enqueue(simpleRequest);
             }
+
         });
     }
 
