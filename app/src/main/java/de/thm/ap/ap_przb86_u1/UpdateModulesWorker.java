@@ -17,8 +17,9 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 public class UpdateModulesWorker extends Worker {
+
     private static final String MODULES_URL = "https://homepages.thm.de/~hg10187/modules.json";
-//    private ModuleDAO moduleDAO = AppDatabase.
+    private ModuleDAO moduleDAO = AppDatabase.getDb(getApplicationContext()).moduleDAO();
 
     public UpdateModulesWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -43,8 +44,7 @@ public class UpdateModulesWorker extends Worker {
                 inputStream = connection.getInputStream();
                 // read json file into modules array
                 Module [] modules = new Gson().fromJson(new InputStreamReader(inputStream), Module[].class);
-
-                //TODO: implement moduleDAO to store modules like:
+                // cleaning database and inserting new modules
                  moduleDAO.deleteAll();
                  moduleDAO.persistAll(modules);
 

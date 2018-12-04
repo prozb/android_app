@@ -13,10 +13,10 @@ import de.thm.ap.ap_przb86_u1.model.Record;
 
 @Dao
 public interface RecordDAO {
-    @Query("select * from record")
+    @Query("SELECT * FROM record")
     LiveData<List<Record>> findAll();
 
-    @Query("select * from record where id = :id")
+    @Query("SELECT * FROM record WHERE id = :id")
     Record findById(Integer id);
 
     @Insert
@@ -28,7 +28,7 @@ public interface RecordDAO {
     @Delete
     void delete(Record record);
 
-    @Query("delete from record where id = :id")
+    @Query("DELETE FROM record WHERE id = :id")
     void remove(Integer id);
 
     @Delete

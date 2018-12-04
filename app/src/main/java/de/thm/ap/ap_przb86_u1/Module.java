@@ -1,5 +1,8 @@
 package de.thm.ap.ap_przb86_u1;
 
+import android.arch.persistence.room.Entity;
+
+@Entity
 public class Module {
     private String nr;
     private String name;
