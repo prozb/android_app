@@ -51,7 +51,7 @@ public class UpdateModulesWorker extends Worker {
         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
         notifyBuilder
                 .setContentTitle(getApplicationContext().getString(R.string.refresh_modules))
-                .setSmallIcon(R.drawable.id_dialog_alert_24dp)
+                .setSmallIcon(R.drawable.ic_update_black_24dp)
                 .setContentText(getApplicationContext().getString(R.string.check_server_data))
                 .setProgress(0,0,true);
         notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());

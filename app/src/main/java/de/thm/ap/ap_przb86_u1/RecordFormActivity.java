@@ -124,7 +124,6 @@ public class RecordFormActivity extends AppCompatActivity {
                 ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
                 Future<Module> moduleFuture = getByIdExecutor.submit(() ->
                         moduleDAO.findById(Integer.parseInt(identifier)));
-
                 Module module = null;
                 try {
                     module = moduleFuture.get();
@@ -164,7 +163,6 @@ public class RecordFormActivity extends AppCompatActivity {
             int note = 0;
             try {
                 note = Integer.parseInt(mark.getText().toString().trim());
-
                 if (!(note == 0 || note > 49 && note < 101)) {
                     throw new NumberFormatException();
                 }
