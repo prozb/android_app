@@ -1,10 +1,13 @@
 package de.thm.ap.ap_przb86_u1;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -19,7 +22,6 @@ public class ModuleSelectActivity extends AppCompatActivity {
     private List<Module> modules;
     private ListView modulesView;
     private ArrayAdapter<Module> adapter;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,12 @@ public class ModuleSelectActivity extends AppCompatActivity {
         });
         modulesView.setEmptyView(findViewById(R.id.modules_list_empty));
         modulesView.setAdapter(adapter);
+        modulesView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("id", String.valueOf(++id));
+            setResult(Activity.RESULT_OK, returnIntent);
+            finish();
+        });
     }
 
     @Override

@@ -1,7 +1,9 @@
 package de.thm.ap.ap_przb86_u1;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +28,8 @@ import java.util.concurrent.Future;
 import de.thm.ap.ap_przb86_u1.model.Record;
 
 public class RecordFormActivity extends AppCompatActivity {
+    private static final int PICK_MODULE_NUM = 1;
+
     private EditText moduleNum;
     private EditText creditPoints;
     private EditText mark;
@@ -36,6 +41,7 @@ public class RecordFormActivity extends AppCompatActivity {
     private ArrayList<Integer> years;
     private int positionInList;
     private boolean updateFlag;
+    private ModuleDAO moduleDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,7 @@ public class RecordFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_records_form);
         Optional.ofNullable(getSupportActionBar()).ifPresent(actionBar -> actionBar.setDisplayHomeAsUpEnabled(true));
 
+        moduleDAO    = AppDatabase.getDb(this).moduleDAO();
         moduleNum    = findViewById(R.id.module_num);
         moduleName   = findViewById(R.id.module_name);
         creditPoints = findViewById(R.id.credits_number);
@@ -101,12 +108,38 @@ public class RecordFormActivity extends AppCompatActivity {
                 return true;
             case R.id.action_start_search_module:
                 Intent i = new Intent(this, ModuleSelectActivity.class);
-                startActivity(i);
-                // TODO: get information about picked module
+                startActivityForResult(i, PICK_MODULE_NUM);
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == PICK_MODULE_NUM){
+            if(resultCode == Activity.RESULT_OK){
+                String identifier  = data.getStringExtra("id");
+
+                ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
+                Future<Module> moduleFuture = getByIdExecutor.submit(() ->
+                        moduleDAO.findById(Integer.parseInt(identifier)));
+
+                Module module = null;
+                try {
+                    module = moduleFuture.get();
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.e("ERROR", e.toString());
+                }
+                setModuleFields(module);
+            }
+        }
+    }
+
+    private void setModuleFields(Module module){
+        moduleNum.setText(module.getNr());
+        moduleName.setText(module.getName());
+        creditPoints.setText(String.valueOf(module.getCrp()));
     }
 
     public void onSave(View view){
@@ -175,6 +208,7 @@ public class RecordFormActivity extends AppCompatActivity {
             finish();
         }
     }
+
     private Record getRecordByPos(int pos){
         ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
         Future<Record> recordFuture = getByIdExecutor.submit(() -> AppDatabase.getDb(this)

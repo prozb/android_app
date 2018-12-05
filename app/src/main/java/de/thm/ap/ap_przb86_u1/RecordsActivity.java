@@ -33,35 +33,34 @@ import de.thm.ap.ap_przb86_u1.model.Record;
 
 public class RecordsActivity extends AppCompatActivity {
     private static boolean DEBUGGING = false;
+
     private boolean INITIALIZED = false;
     private ListView recordListView;
     private ProgressBar progressBar;
-    private ArrayAdapter<Record> adapter;
-    private List<Record> records;
-    private StringBuilder sb;
+    private StringBuilder builder;
     private RecordDAO recordDAO;
+    private List<Record> records;
+    private ArrayAdapter<Record> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_records);
 
-        sb = new StringBuilder();
+        builder        = new StringBuilder();
         recordListView = findViewById(R.id.records_list);
         recordDAO      = AppDatabase.getDb(this).recordDAO();
+        records        = new ArrayList<>();
+        adapter        = new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1, records);
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
         recordDAO.findAll().observe(this,
-                records -> {
-                    if(adapter == null) {
-                        RecordsActivity.this.records = records;
-                        RecordsActivity.this.adapter = new ArrayAdapter<>(this,
-                                android.R.layout.simple_list_item_activated_1, records);
-                        RecordsActivity.this.recordListView.setAdapter(adapter);
-                    }else{
-                        RecordsActivity.this.adapter.clear();
-                        RecordsActivity.this.adapter.addAll(records);
-                    }
+                records1 -> {
+                    records = records1;
+                    adapter.clear();
+                    adapter.addAll(records);
+                    recordListView.setAdapter(adapter);
                 });
+
         recordListView.setOnItemClickListener((parent, view, position, id) -> {
             if(getIntent().getAction().equals(Intent.ACTION_PICK)){
                 Log.d("ACTION", "action pick performed");
@@ -97,8 +96,6 @@ public class RecordsActivity extends AppCompatActivity {
                    .enqueueUniquePeriodicWork("updating modules", ExistingPeriodicWorkPolicy.KEEP, workRequest);
 
         if(DEBUGGING && !INITIALIZED){
-//            List<Record> records_menu = getAllRecords();
-//            if(records_menu == null || records_menu.size() == 0) {
                 Executors.newSingleThreadExecutor()
                         .submit(() -> recordDAO.persist(new Record(
                                 "CS1013", "Objektorientierte Programmierung",
@@ -111,7 +108,6 @@ public class RecordsActivity extends AppCompatActivity {
                         .submit(() -> recordDAO.persist(new Record(
                                 "LEL", "LUL",
                                 2016, false, true, 6, 81)));
-//            }
             INITIALIZED = true;
         }
 
@@ -138,7 +134,6 @@ public class RecordsActivity extends AppCompatActivity {
                         Toast.makeText(RecordsActivity.this, "records_menu: " + records.size(), Toast.LENGTH_SHORT).show();
                         deleteSelectedItems();
                         Toast.makeText(RecordsActivity.this, "lol records_menu: " + records.size(), Toast.LENGTH_SHORT).show();
-//                        updateAdapter();
                         mode.finish();
                         return true;
                     case R.id.action_mail:
@@ -221,7 +216,7 @@ public class RecordsActivity extends AppCompatActivity {
 
     private String getStatisticsForMail() {
         ArrayList<Integer> selected = getSelectedItemsArray();
-        sb.setLength(0);
+        builder.setLength(0);
 
         Record record;
 
@@ -230,20 +225,20 @@ public class RecordsActivity extends AppCompatActivity {
             record = records.get(pos);
 
             if(record != null){
-                sb.append(record.getModuleName());
-                sb.append(" ");
-                sb.append(record.getModuleNum());
-                sb.append(" (");
-                sb.append(record.getMark());
-                sb.append("% ");
-                sb.append(record.getCredits());
-                sb.append(" crp");
-                sb.append(")");
-                sb.append("\n");
+                builder.append(record.getModuleName());
+                builder.append(" ");
+                builder.append(record.getModuleNum());
+                builder.append(" (");
+                builder.append(record.getMark());
+                builder.append("% ");
+                builder.append(record.getCredits());
+                builder.append(" crp");
+                builder.append(")");
+                builder.append("\n");
             }
         }
 
-        return sb.toString();
+        return builder.toString();
     }
 
     public void showStatisticAlert(String stats) {
@@ -257,19 +252,19 @@ public class RecordsActivity extends AppCompatActivity {
     public void setStatistics(Stats stats){
 //        Stats stats = new Stats(records_menu);
 
-        sb.setLength(0);
-        sb.append("Leistungen: ");
-        sb.append(stats.getSumModules());
-        sb.append("\n50% Leistungen: ");
-        sb.append(stats.getSumHalfWeighted());
-        sb.append("\nSumme Crp: ");
-        sb.append(stats.getSumCrp());
-        sb.append("\nDurchschnitt: ");
-        sb.append(stats.getAverageMark());
-        sb.append("%\nCrp bis Ziel: ");
-        sb.append(stats.getCrpToEnd());
+        builder.setLength(0);
+        builder.append("Leistungen: ");
+        builder.append(stats.getSumModules());
+        builder.append("\n50% Leistungen: ");
+        builder.append(stats.getSumHalfWeighted());
+        builder.append("\nSumme Crp: ");
+        builder.append(stats.getSumCrp());
+        builder.append("\nDurchschnitt: ");
+        builder.append(stats.getAverageMark());
+        builder.append("%\nCrp bis Ziel: ");
+        builder.append(stats.getCrpToEnd());
 
-        showStatisticAlert(sb.toString());
+        showStatisticAlert(builder.toString());
     }
 
     // getting selected items from listview
