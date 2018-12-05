@@ -3,7 +3,6 @@ package de.thm.ap.ap_przb86_u1;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -18,7 +17,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -119,11 +117,11 @@ public class RecordFormActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == PICK_MODULE_NUM){
             if(resultCode == Activity.RESULT_OK){
-                String identifier  = data.getStringExtra("id");
+                String moduleNr  = data.getStringExtra("id");
 
                 ExecutorService getByIdExecutor = Executors.newSingleThreadExecutor();
                 Future<Module> moduleFuture = getByIdExecutor.submit(() ->
-                        moduleDAO.findById(Integer.parseInt(identifier)));
+                        moduleDAO.findByNr(moduleNr));
                 Module module = null;
                 try {
                     module = moduleFuture.get();

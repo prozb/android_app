@@ -17,8 +17,8 @@ public interface ModuleDAO {
     @Insert
     void persistAll(Module[] modules);
 
-    @Query("SELECT * FROM module WHERE id = :id")
-    Module findById(Integer id);
+    @Query("SELECT * FROM module WHERE nr = :nr")
+    Module findByNr(String nr);
 
     @Query("SELECT * FROM module")
     LiveData<List<Module>> findAll();

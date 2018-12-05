@@ -73,7 +73,7 @@ public class ModuleSelectActivity extends AppCompatActivity {
         modulesView.setAdapter(adapter);
         modulesView.setOnItemClickListener((parent, view, position, id) -> {
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("id", String.valueOf(++id));
+            returnIntent.putExtra("id", modules.get((int)id).getNr());
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
         });
