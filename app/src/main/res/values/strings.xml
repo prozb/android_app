@@ -26,4 +26,6 @@
     <string name="check_server_data">check server data</string>
     <string name="loading_new_data">loading new data</string>
     <string name="loaded_success">loading new data success</string>
+    <string name="search">search module</string>
+    <string name="no_modules">no modules</string>
 </resources>

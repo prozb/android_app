@@ -17,7 +17,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public static AppDatabase getDb(Context ctx){
         if(INSTANCE == null){
             Log.i("AppDatabase", "Creating app database");
-            INSTANCE = Room.databaseBuilder(ctx.getApplicationContext(), AppDatabase.class, "records-db")
+            INSTANCE = Room.databaseBuilder(ctx.getApplicationContext(), AppDatabase.class, "records_menu-db")
                     .build();
         }
         return INSTANCE;

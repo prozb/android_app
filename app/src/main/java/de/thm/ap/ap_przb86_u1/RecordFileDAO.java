@@ -15,7 +15,7 @@ import java.util.Optional;
 import de.thm.ap.ap_przb86_u1.model.Record;
 
 class RecordFileDAO {
-    private static String FILE_NAME = "records.obj";
+    private static String FILE_NAME = "records_menu.obj";
 
     private Context ctx;
     private List<Record> records;

@@ -48,7 +48,7 @@ public class RecordsActivity extends AppCompatActivity {
 
         sb = new StringBuilder();
         recordListView = findViewById(R.id.records_list);
-        recordDAO = AppDatabase.getDb(this).recordDAO();
+        recordDAO      = AppDatabase.getDb(this).recordDAO();
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
         recordDAO.findAll().observe(this,
                 records -> {
@@ -71,7 +71,7 @@ public class RecordsActivity extends AppCompatActivity {
                 }catch (Exception e){
                     setResult(RESULT_CANCELED);
                 }
-                Uri uriSelected = Uri.parse("content//content://de.thm.ap.ap_przb86_u1.cp/records-db/" + recordId);
+                Uri uriSelected = Uri.parse("content//content://de.thm.ap.ap_przb86_u1.cp/records_menu-db/" + recordId);
                 setResult(RESULT_OK, new Intent().setData(uriSelected));
                 finish();
             }else {
@@ -97,8 +97,8 @@ public class RecordsActivity extends AppCompatActivity {
                    .enqueueUniquePeriodicWork("updating modules", ExistingPeriodicWorkPolicy.KEEP, workRequest);
 
         if(DEBUGGING && !INITIALIZED){
-//            List<Record> records = getAllRecords();
-//            if(records == null || records.size() == 0) {
+//            List<Record> records_menu = getAllRecords();
+//            if(records_menu == null || records_menu.size() == 0) {
                 Executors.newSingleThreadExecutor()
                         .submit(() -> recordDAO.persist(new Record(
                                 "CS1013", "Objektorientierte Programmierung",
@@ -135,9 +135,9 @@ public class RecordsActivity extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.action_delete:
                         Log.d("PRESSED", "delete action in choose menu performed");
-                        Toast.makeText(RecordsActivity.this, "records: " + records.size(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RecordsActivity.this, "records_menu: " + records.size(), Toast.LENGTH_SHORT).show();
                         deleteSelectedItems();
-                        Toast.makeText(RecordsActivity.this, "lol records: " + records.size(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RecordsActivity.this, "lol records_menu: " + records.size(), Toast.LENGTH_SHORT).show();
 //                        updateAdapter();
                         mode.finish();
                         return true;
@@ -172,7 +172,7 @@ public class RecordsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.records, menu);
+        getMenuInflater().inflate(R.menu.records_menu, menu);
         return true;
     }
 
@@ -208,9 +208,9 @@ public class RecordsActivity extends AppCompatActivity {
                 setPositiveButton(R.string.yes, (dialog, which) -> {
                         ArrayList<Integer> selected = getSelectedItemsArray();
                         for(int i = selected.size() - 1; i >= 0; i--){
-                            Toast.makeText(this, "records: " + records.size(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "records_menu: " + records.size(), Toast.LENGTH_SHORT).show();
                             removeById(selected.get(i));
-                            Toast.makeText(this, "records: " + records.size(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "records_menu: " + records.size(), Toast.LENGTH_SHORT).show();
                             Log.d("REMOVING", "removed " + selected.get(i));
                         }
                         recordDAO.findAll();
@@ -255,7 +255,7 @@ public class RecordsActivity extends AppCompatActivity {
     }
 
     public void setStatistics(Stats stats){
-//        Stats stats = new Stats(records);
+//        Stats stats = new Stats(records_menu);
 
         sb.setLength(0);
         sb.append("Leistungen: ");

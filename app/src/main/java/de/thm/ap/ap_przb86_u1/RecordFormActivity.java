@@ -1,8 +1,10 @@
 package de.thm.ap.ap_przb86_u1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -40,7 +42,6 @@ public class RecordFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_records_form);
-
         Optional.ofNullable(getSupportActionBar()).ifPresent(actionBar -> actionBar.setDisplayHomeAsUpEnabled(true));
 
         moduleNum    = findViewById(R.id.module_num);
@@ -87,11 +88,22 @@ public class RecordFormActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.record_edit_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-            finish();
-            return true;
+                finish();
+                return true;
+            case R.id.action_start_search_module:
+                Intent i = new Intent(this, ModuleSelectActivity.class);
+                startActivity(i);
+                // TODO: get information about picked module
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

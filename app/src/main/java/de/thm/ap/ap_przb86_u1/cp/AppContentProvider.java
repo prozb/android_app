@@ -31,7 +31,7 @@ import de.thm.ap.ap_przb86_u1.model.Record;
 public class AppContentProvider extends ContentProvider {
     public static String AUTHORITY = "de.thm.ap.ap_przb86_u1.cp";
 
-    private static String RECORD_PATH = "records-db";
+    private static String RECORD_PATH = "records_menu-db";
     private static UriMatcher URI_MATCHER;
     private static final int RECORDS   = 1;
     private static final int RECORD_ID = 2;

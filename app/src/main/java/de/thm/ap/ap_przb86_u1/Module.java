@@ -18,6 +18,11 @@ public class Module {
         this.crp = crp;
     }
 
+    @Override
+    public String toString() {
+        return nr + " " + name + " (" + crp + "crp)";
+    }
+
     public int getCrp() {
         return crp;
     }
