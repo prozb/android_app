@@ -22,7 +22,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 import de.thm.ap.ap_przb86_u1.model.Record;
 
 public class RecordsActivity extends AppCompatActivity {
@@ -41,12 +47,9 @@ public class RecordsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_records);
 
         sb = new StringBuilder();
-
         recordListView = findViewById(R.id.records_list);
-        recordDAO      = AppDatabase.getDb(this).recordDAO();
-
+        recordDAO = AppDatabase.getDb(this).recordDAO();
         recordListView.setEmptyView(findViewById(R.id.records_list_empty));
-
         recordDAO.findAll().observe(this,
                 records -> {
                     if(adapter == null) {
@@ -79,6 +82,19 @@ public class RecordsActivity extends AppCompatActivity {
             }
         });
         recordListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
+                .build();
+
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest
+                .Builder(UpdateModulesWorker.class, 30, TimeUnit.DAYS)
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance()
+                   .enqueueUniquePeriodicWork("updating modules", ExistingPeriodicWorkPolicy.KEEP, workRequest);
 
         if(DEBUGGING && !INITIALIZED){
 //            List<Record> records = getAllRecords();
@@ -184,14 +200,6 @@ public class RecordsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
      }
-
-    private void updateAdapter(){
-        RecordsActivity.this.adapter.clear();
-        Executors.newSingleThreadExecutor()
-                .submit(() -> recordDAO.persist(new Record(
-                        "CS50", "Programmierung",
-                        2016, true, true, 6, 73)));
-    }
 
     private void deleteSelectedItems(){
         new AlertDialog.Builder(this).

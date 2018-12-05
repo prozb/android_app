@@ -22,4 +22,8 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="my_achievements">Meine Leistungen</string>
+    <string name="refresh_modules">refreshing modules</string>
+    <string name="check_server_data">check server data</string>
+    <string name="loading_new_data">loading new data</string>
+    <string name="loaded_success">loading new data success</string>
 </resources>
