@@ -20,6 +20,7 @@ public class ModuleSelectActivity extends AppCompatActivity {
     private ListView modulesView;
     private ArrayAdapter<Module> adapter;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
