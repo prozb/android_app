@@ -1,7 +1,9 @@
 package de.thm.ap.ap_przb86_u1;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.Constraints;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 public class ModuleSelectActivity extends AppCompatActivity {
 
@@ -38,6 +47,27 @@ public class ModuleSelectActivity extends AppCompatActivity {
             this.modules = modulesNew;
             this.adapter.clear();
             this.adapter.addAll(Objects.requireNonNull(modulesNew));
+
+            if(modules.isEmpty()){
+                SharedPreferences sharedPreferences = getApplicationContext()
+                        .getSharedPreferences("modules", Context.MODE_PRIVATE);
+                sharedPreferences.edit().putLong("lastModified", 0).apply();
+
+                Log.i("MODULES", "no modules, pulling from the server");
+                Constraints constraints = new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiresBatteryNotLow(true)
+                        .build();
+
+                OneTimeWorkRequest workRequest = new OneTimeWorkRequest
+                        .Builder(UpdateModulesWorker.class)
+                        .setConstraints(constraints)
+                        .build();
+
+                WorkManager.getInstance()
+                        .beginUniqueWork("updating_modules_one_time", ExistingWorkPolicy.KEEP, workRequest).enqueue();
+                Log.i("MODULES", "modules updated");
+            }
         });
         modulesView.setEmptyView(findViewById(R.id.modules_list_empty));
         modulesView.setAdapter(adapter);
