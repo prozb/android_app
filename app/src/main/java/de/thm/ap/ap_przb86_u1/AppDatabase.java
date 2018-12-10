@@ -4,7 +4,15 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
+
+import com.google.gson.Gson;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import de.thm.ap.ap_przb86_u1.model.Record;
 
@@ -20,6 +28,7 @@ public abstract class AppDatabase extends RoomDatabase {
             INSTANCE = Room.databaseBuilder(ctx.getApplicationContext(), AppDatabase.class, "records_menu-db")
                     .build();
         }
+
         return INSTANCE;
     }
 }

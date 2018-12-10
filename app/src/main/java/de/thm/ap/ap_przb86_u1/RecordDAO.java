@@ -6,7 +6,13 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.content.Context;
+import android.util.Log;
 
+import com.google.gson.Gson;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import de.thm.ap.ap_przb86_u1.model.Record;

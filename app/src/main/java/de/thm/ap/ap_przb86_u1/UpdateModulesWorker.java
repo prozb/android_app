@@ -24,7 +24,7 @@ public class UpdateModulesWorker extends Worker {
     private static final String CHANNEL_ID   = "4711";
 
     private static final String MODULES_URL = "https://homepages.thm.de/~hg10187/modules.json";
-    private ModuleDAO moduleDAO = AppDatabase.getDb(getApplicationContext()).moduleDAO();
+    protected ModuleDAO moduleDAO = AppDatabase.getDb(getApplicationContext()).moduleDAO();
 
     public UpdateModulesWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);

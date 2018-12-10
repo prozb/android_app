@@ -12,6 +12,10 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -49,24 +53,33 @@ public class ModuleSelectActivity extends AppCompatActivity {
             this.adapter.addAll(Objects.requireNonNull(modulesNew));
 
             if(modules.isEmpty()){
-                SharedPreferences sharedPreferences = getApplicationContext()
-                        .getSharedPreferences("modules", Context.MODE_PRIVATE);
-                sharedPreferences.edit().putLong("lastModified", 0).apply();
-
-                Log.i("MODULES", "no modules, pulling from the server");
-                Constraints constraints = new Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .setRequiresBatteryNotLow(true)
-                        .build();
-
+                // updating modules from file when db is empty
                 OneTimeWorkRequest workRequest = new OneTimeWorkRequest
-                        .Builder(UpdateModulesWorker.class)
-                        .setConstraints(constraints)
+                        .Builder(UpdateModulesFromFileWorker.class)
                         .build();
 
-                WorkManager.getInstance()
-                        .beginUniqueWork("updating_modules_one_time", ExistingWorkPolicy.KEEP, workRequest).enqueue();
+                WorkManager.getInstance().beginUniqueWork("updating_modules_from_file_one_time",
+                        ExistingWorkPolicy.KEEP, workRequest).enqueue();
                 Log.i("MODULES", "modules updated");
+
+//                SharedPreferences sharedPreferences = getApplicationContext()
+//                        .getSharedPreferences("modules", Context.MODE_PRIVATE);
+//                sharedPreferences.edit().putLong("lastModified", 0).apply();
+//
+//                Log.i("MODULES", "no modules, pulling from the server");
+//                Constraints constraints = new Constraints.Builder()
+//                        .setRequiredNetworkType(NetworkType.CONNECTED)
+//                        .setRequiresBatteryNotLow(true)
+//                        .build();
+//
+//                OneTimeWorkRequest workRequest = new OneTimeWorkRequest
+//                        .Builder(UpdateModulesWorker.class)
+//                        .setConstraints(constraints)
+//                        .build();
+//
+//                WorkManager.getInstance()
+//                        .beginUniqueWork("updating_modules_one_time", ExistingWorkPolicy.KEEP, workRequest).enqueue();
+//                Log.i("MODULES", "modules updated");
             }
         });
         modulesView.setEmptyView(findViewById(R.id.modules_list_empty));
